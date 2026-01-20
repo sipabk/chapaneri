@@ -6,6 +6,7 @@ import {
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MemberCard } from "@/components/members/MemberCard";
+import { LineagePath } from "@/components/members/LineagePath";
 import { Button } from "@/components/ui/button";
 import { 
   getMemberById, getParents, getChildren, 
@@ -134,6 +135,15 @@ const MemberDetail = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Lineage Path */}
+        <section className="py-8 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto">
+              <LineagePath member={member} />
             </div>
           </div>
         </section>
