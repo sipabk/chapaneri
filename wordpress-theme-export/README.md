@@ -29,6 +29,7 @@ chapaneri-heritage/
 ├── footer.php                   # Footer template
 ├── index.php                    # Default template
 ├── front-page.php              # Homepage template
+├── page-family-tree.php        # Family tree page template
 ├── single-family_member.php    # Single family member template
 ├── archive-family_member.php   # Family members archive template
 ├── assets/
