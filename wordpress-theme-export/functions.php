@@ -689,3 +689,336 @@ function chapaneri_heritage_rewrite_flush() {
     flush_rewrite_rules();
 }
 add_action('after_switch_theme', 'chapaneri_heritage_rewrite_flush');
+
+/**
+ * Customizer Settings
+ */
+function chapaneri_heritage_customize_register($wp_customize) {
+    
+    // ==========================================================================
+    // FAMILY TREE SETTINGS SECTION
+    // ==========================================================================
+    
+    $wp_customize->add_section('chapaneri_family_tree', array(
+        'title'       => __('Family Tree Settings', 'chapaneri-heritage'),
+        'description' => __('Configure the family tree visualization options.', 'chapaneri-heritage'),
+        'priority'    => 35,
+    ));
+    
+    // Root Member Selection
+    $wp_customize->add_setting('family_tree_root_member', array(
+        'default'           => 0,
+        'sanitize_callback' => 'absint',
+        'transport'         => 'refresh',
+    ));
+    
+    $members = get_posts(array(
+        'post_type'      => 'family_member',
+        'posts_per_page' => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'post_status'    => 'publish',
+    ));
+    
+    $member_choices = array(0 => __('Auto-detect (first root ancestor)', 'chapaneri-heritage'));
+    foreach ($members as $member) {
+        $member_choices[$member->ID] = $member->post_title;
+    }
+    
+    $wp_customize->add_control('family_tree_root_member', array(
+        'label'       => __('Root Family Member', 'chapaneri-heritage'),
+        'description' => __('Select the family member to display at the top of the family tree.', 'chapaneri-heritage'),
+        'section'     => 'chapaneri_family_tree',
+        'type'        => 'select',
+        'choices'     => $member_choices,
+    ));
+    
+    // Default Expansion Level
+    $wp_customize->add_setting('family_tree_expand_level', array(
+        'default'           => 2,
+        'sanitize_callback' => 'absint',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('family_tree_expand_level', array(
+        'label'       => __('Default Expansion Level', 'chapaneri-heritage'),
+        'description' => __('How many generations to expand by default (1-5).', 'chapaneri-heritage'),
+        'section'     => 'chapaneri_family_tree',
+        'type'        => 'number',
+        'input_attrs' => array(
+            'min'  => 1,
+            'max'  => 5,
+            'step' => 1,
+        ),
+    ));
+    
+    // Show Spouses
+    $wp_customize->add_setting('family_tree_show_spouses', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('family_tree_show_spouses', array(
+        'label'       => __('Show Spouses', 'chapaneri-heritage'),
+        'description' => __('Display spouse cards next to family members.', 'chapaneri-heritage'),
+        'section'     => 'chapaneri_family_tree',
+        'type'        => 'checkbox',
+    ));
+    
+    // Show Birth Years
+    $wp_customize->add_setting('family_tree_show_years', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('family_tree_show_years', array(
+        'label'       => __('Show Birth Years', 'chapaneri-heritage'),
+        'description' => __('Display birth years on tree node cards.', 'chapaneri-heritage'),
+        'section'     => 'chapaneri_family_tree',
+        'type'        => 'checkbox',
+    ));
+    
+    // Enable Zoom Controls
+    $wp_customize->add_setting('family_tree_enable_zoom', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('family_tree_enable_zoom', array(
+        'label'       => __('Enable Zoom Controls', 'chapaneri-heritage'),
+        'description' => __('Show zoom in/out controls on the tree page.', 'chapaneri-heritage'),
+        'section'     => 'chapaneri_family_tree',
+        'type'        => 'checkbox',
+    ));
+    
+    // ==========================================================================
+    // TIMELINE SETTINGS SECTION
+    // ==========================================================================
+    
+    $wp_customize->add_section('chapaneri_timeline', array(
+        'title'       => __('Timeline Settings', 'chapaneri-heritage'),
+        'description' => __('Configure the family timeline display options.', 'chapaneri-heritage'),
+        'priority'    => 36,
+    ));
+    
+    // Show Births
+    $wp_customize->add_setting('timeline_show_births', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('timeline_show_births', array(
+        'label'   => __('Show Birth Events', 'chapaneri-heritage'),
+        'section' => 'chapaneri_timeline',
+        'type'    => 'checkbox',
+    ));
+    
+    // Show Deaths
+    $wp_customize->add_setting('timeline_show_deaths', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('timeline_show_deaths', array(
+        'label'   => __('Show Passing Events', 'chapaneri-heritage'),
+        'section' => 'chapaneri_timeline',
+        'type'    => 'checkbox',
+    ));
+    
+    // Show Marriages
+    $wp_customize->add_setting('timeline_show_marriages', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('timeline_show_marriages', array(
+        'label'   => __('Show Marriage Events', 'chapaneri-heritage'),
+        'section' => 'chapaneri_timeline',
+        'type'    => 'checkbox',
+    ));
+    
+    // Group By
+    $wp_customize->add_setting('timeline_group_by', array(
+        'default'           => 'decade',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('timeline_group_by', array(
+        'label'   => __('Group Events By', 'chapaneri-heritage'),
+        'section' => 'chapaneri_timeline',
+        'type'    => 'select',
+        'choices' => array(
+            'decade' => __('Decade', 'chapaneri-heritage'),
+            'year'   => __('Year', 'chapaneri-heritage'),
+            'none'   => __('No Grouping', 'chapaneri-heritage'),
+        ),
+    ));
+    
+    // ==========================================================================
+    // PLACES SETTINGS SECTION
+    // ==========================================================================
+    
+    $wp_customize->add_section('chapaneri_places', array(
+        'title'       => __('Places Settings', 'chapaneri-heritage'),
+        'description' => __('Configure the family places/locations display.', 'chapaneri-heritage'),
+        'priority'    => 37,
+    ));
+    
+    // Sort Places By
+    $wp_customize->add_setting('places_sort_by', array(
+        'default'           => 'count',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('places_sort_by', array(
+        'label'   => __('Sort Locations By', 'chapaneri-heritage'),
+        'section' => 'chapaneri_places',
+        'type'    => 'select',
+        'choices' => array(
+            'count' => __('Member Count (Most First)', 'chapaneri-heritage'),
+            'name'  => __('Location Name (A-Z)', 'chapaneri-heritage'),
+        ),
+    ));
+    
+    // Show Unknown Locations
+    $wp_customize->add_setting('places_show_unknown', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('places_show_unknown', array(
+        'label'       => __('Show Unknown Locations', 'chapaneri-heritage'),
+        'description' => __('Display members without a recorded birthplace.', 'chapaneri-heritage'),
+        'section'     => 'chapaneri_places',
+        'type'        => 'checkbox',
+    ));
+    
+    // ==========================================================================
+    // HERO SECTION SETTINGS
+    // ==========================================================================
+    
+    $wp_customize->add_section('chapaneri_hero', array(
+        'title'       => __('Hero Section', 'chapaneri-heritage'),
+        'description' => __('Customize the homepage hero section.', 'chapaneri-heritage'),
+        'priority'    => 30,
+    ));
+    
+    // Hero Title
+    $wp_customize->add_setting('hero_title', array(
+        'default'           => __('Preserving Our Heritage', 'chapaneri-heritage'),
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'postMessage',
+    ));
+    
+    $wp_customize->add_control('hero_title', array(
+        'label'   => __('Hero Title', 'chapaneri-heritage'),
+        'section' => 'chapaneri_hero',
+        'type'    => 'text',
+    ));
+    
+    // Hero Subtitle
+    $wp_customize->add_setting('hero_subtitle', array(
+        'default'           => __('Chapaneri Family Archive', 'chapaneri-heritage'),
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'postMessage',
+    ));
+    
+    $wp_customize->add_control('hero_subtitle', array(
+        'label'   => __('Hero Subtitle', 'chapaneri-heritage'),
+        'section' => 'chapaneri_hero',
+        'type'    => 'text',
+    ));
+    
+    // Hero Description
+    $wp_customize->add_setting('hero_description', array(
+        'default'           => __('Connecting generations through shared stories, memories, and the bonds that make us family.', 'chapaneri-heritage'),
+        'sanitize_callback' => 'sanitize_textarea_field',
+        'transport'         => 'postMessage',
+    ));
+    
+    $wp_customize->add_control('hero_description', array(
+        'label'   => __('Hero Description', 'chapaneri-heritage'),
+        'section' => 'chapaneri_hero',
+        'type'    => 'textarea',
+    ));
+    
+    // Hero Background Image
+    $wp_customize->add_setting('hero_background_image', array(
+        'default'           => '',
+        'sanitize_callback' => 'esc_url_raw',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'hero_background_image', array(
+        'label'   => __('Hero Background Image', 'chapaneri-heritage'),
+        'section' => 'chapaneri_hero',
+    )));
+    
+    // ==========================================================================
+    // STATISTICS SECTION SETTINGS
+    // ==========================================================================
+    
+    $wp_customize->add_section('chapaneri_stats', array(
+        'title'       => __('Statistics Display', 'chapaneri-heritage'),
+        'description' => __('Configure the family statistics section on the homepage.', 'chapaneri-heritage'),
+        'priority'    => 31,
+    ));
+    
+    // Show Statistics
+    $wp_customize->add_setting('show_statistics', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+        'transport'         => 'refresh',
+    ));
+    
+    $wp_customize->add_control('show_statistics', array(
+        'label'   => __('Show Statistics Section', 'chapaneri-heritage'),
+        'section' => 'chapaneri_stats',
+        'type'    => 'checkbox',
+    ));
+}
+add_action('customize_register', 'chapaneri_heritage_customize_register');
+
+/**
+ * Get Customizer Tree Settings
+ */
+function chapaneri_get_tree_settings() {
+    return array(
+        'root_member'   => get_theme_mod('family_tree_root_member', 0),
+        'expand_level'  => get_theme_mod('family_tree_expand_level', 2),
+        'show_spouses'  => get_theme_mod('family_tree_show_spouses', true),
+        'show_years'    => get_theme_mod('family_tree_show_years', true),
+        'enable_zoom'   => get_theme_mod('family_tree_enable_zoom', true),
+    );
+}
+
+/**
+ * Get Customizer Timeline Settings
+ */
+function chapaneri_get_timeline_settings() {
+    return array(
+        'show_births'    => get_theme_mod('timeline_show_births', true),
+        'show_deaths'    => get_theme_mod('timeline_show_deaths', true),
+        'show_marriages' => get_theme_mod('timeline_show_marriages', true),
+        'group_by'       => get_theme_mod('timeline_group_by', 'decade'),
+    );
+}
+
+/**
+ * Get Customizer Places Settings
+ */
+function chapaneri_get_places_settings() {
+    return array(
+        'sort_by'      => get_theme_mod('places_sort_by', 'count'),
+        'show_unknown' => get_theme_mod('places_show_unknown', true),
+    );
+}
