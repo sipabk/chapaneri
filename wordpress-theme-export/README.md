@@ -24,12 +24,14 @@ A heritage-inspired WordPress theme for family genealogy and archive websites. F
 ```
 chapaneri-heritage/
 ├── style.css                    # Main stylesheet with CSS variables
-├── functions.php                # Theme functions, CPTs, taxonomies
+├── functions.php                # Theme functions, CPTs, taxonomies, Customizer
 ├── header.php                   # Header template
 ├── footer.php                   # Footer template
 ├── index.php                    # Default template
 ├── front-page.php              # Homepage template
 ├── page-family-tree.php        # Family tree page template
+├── page-timeline.php           # Timeline page template
+├── page-places.php             # Places/locations page template
 ├── single-family_member.php    # Single family member template
 ├── archive-family_member.php   # Family members archive template
 ├── assets/
@@ -38,6 +40,14 @@ chapaneri-heritage/
 │       └── dark-mode.js        # Dark mode toggle
 └── README.md                   # This file
 ```
+
+## Page Templates
+
+| Template | Description | Usage |
+|----------|-------------|-------|
+| Family Tree | Interactive expandable tree visualization | Create page → Select "Family Tree" template |
+| Family Timeline | Chronological birth/death/marriage events | Create page → Select "Family Timeline" template |
+| Family Places | Geographic grouping by birthplace | Create page → Select "Family Places" template |
 
 ## Design System
 
@@ -111,6 +121,23 @@ Navigate to Appearance → Customize:
 
 ### Family Statistics
 - Toggle statistics display on homepage
+
+### Family Tree Settings
+- **Root Family Member** - Select which member appears at the top of the tree
+- **Default Expansion Level** - How many generations to expand by default (1-5)
+- **Show Spouses** - Display spouse cards next to family members
+- **Show Birth Years** - Display birth years on tree node cards
+- **Enable Zoom Controls** - Show zoom in/out controls on the tree page
+
+### Timeline Settings
+- **Show Birth Events** - Include births in the timeline
+- **Show Passing Events** - Include deaths in the timeline
+- **Show Marriage Events** - Include marriages in the timeline
+- **Group Events By** - Decade, Year, or No Grouping
+
+### Places Settings
+- **Sort Locations By** - Member Count or Location Name
+- **Show Unknown Locations** - Display members without recorded birthplace
 
 ## Required Plugins (Recommended)
 
