@@ -32,12 +32,17 @@ chapaneri-heritage/
 ├── page-family-tree.php        # Family tree page template
 ├── page-timeline.php           # Timeline page template
 ├── page-places.php             # Places/locations page template
+├── page-search.php             # Advanced search page template
 ├── single-family_member.php    # Single family member template
 ├── archive-family_member.php   # Family members archive template
+├── inc/
+│   ├── class-widget-family-stats.php    # Family statistics widget
+│   └── class-widget-featured-members.php # Featured members widget
 ├── assets/
 │   └── js/
 │       ├── navigation.js       # Mobile menu & navigation
-│       └── dark-mode.js        # Dark mode toggle
+│       ├── dark-mode.js        # Dark mode toggle
+│       └── ajax-search.js      # AJAX-powered instant search
 └── README.md                   # This file
 ```
 
@@ -48,6 +53,7 @@ chapaneri-heritage/
 | Family Tree | Interactive expandable tree visualization | Create page → Select "Family Tree" template |
 | Family Timeline | Chronological birth/death/marriage events | Create page → Select "Family Timeline" template |
 | Family Places | Geographic grouping by birthplace | Create page → Select "Family Places" template |
+| Family Search | Advanced search with filters and AJAX lookup | Create page → Select "Family Search" template |
 
 ## Design System
 
@@ -138,6 +144,52 @@ Navigate to Appearance → Customize:
 ### Places Settings
 - **Sort Locations By** - Member Count or Location Name
 - **Show Unknown Locations** - Display members without recorded birthplace
+
+## Widgets
+
+The theme includes two custom widgets for displaying family information in sidebars and widget areas:
+
+### Family Statistics Widget
+Displays key family statistics with customizable options:
+- Total Members count
+- Generations count
+- Locations count
+- Living Members count
+- Layout options: Vertical, Horizontal, or Grid
+
+### Featured Family Members Widget
+Displays family members based on various criteria:
+- **Display Modes**: Random, Recently Added, Featured Only, Newest by Birth, Oldest by Birth
+- **Number of members**: 1-10
+- **Layout options**: List, Grid, or Compact
+- **Show/hide birth year and location**
+
+To add widgets: Go to Appearance → Widgets and drag the widgets to your preferred sidebar.
+
+## AJAX Instant Search
+
+The theme includes an AJAX-powered search feature for instant member lookup:
+
+### Features
+- Real-time search results as you type
+- Keyboard navigation (arrow keys, Enter, Escape)
+- Highlighted matching text
+- Member photos, birth year, and location in results
+- Debounced requests for performance
+- Accessible with proper ARIA attributes
+
+### Usage
+The AJAX search is automatically available on the Search page template. To add it to other templates, use:
+
+```php
+<div class="ajax-search-container" data-ajax-search data-min-chars="2">
+    <div class="ajax-search__input-wrapper">
+        <input type="text" data-ajax-search-input class="ajax-search__input" placeholder="Search...">
+        <div class="ajax-search__loader" data-ajax-search-loader><!-- loader --></div>
+    </div>
+    <div class="ajax-search__results" data-ajax-search-results></div>
+</div>
+```
 
 ## Required Plugins (Recommended)
 
