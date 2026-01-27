@@ -134,13 +134,37 @@ function chapaneri_heritage_scripts() {
         wp_get_theme()->get('Version'),
         true
     );
+    
+    // AJAX Search
+    wp_enqueue_script(
+        'chapaneri-heritage-ajax-search',
+        get_template_directory_uri() . '/assets/js/ajax-search.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+    
+    // Localize AJAX variables
+    wp_localize_script('chapaneri-heritage-ajax-search', 'chapaneriAjax', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('chapaneri_member_search'),
+    ));
 }
 add_action('wp_enqueue_scripts', 'chapaneri_heritage_scripts');
 
 /**
- * Register Sidebars
+ * Register Sidebars and Widgets
  */
 function chapaneri_heritage_widgets_init() {
+    // Include widget classes
+    require_once get_template_directory() . '/inc/class-widget-family-stats.php';
+    require_once get_template_directory() . '/inc/class-widget-featured-members.php';
+    
+    // Register widgets
+    register_widget('Chapaneri_Family_Stats_Widget');
+    register_widget('Chapaneri_Featured_Members_Widget');
+    
+    // Register sidebars
     register_sidebar(array(
         'name'          => __('Main Sidebar', 'chapaneri-heritage'),
         'id'            => 'sidebar-main',
@@ -180,8 +204,81 @@ function chapaneri_heritage_widgets_init() {
         'before_title'  => '<h4 class="widget-title font-display">',
         'after_title'   => '</h4>',
     ));
+    
+    register_sidebar(array(
+        'name'          => __('Member Sidebar', 'chapaneri-heritage'),
+        'id'            => 'sidebar-member',
+        'description'   => __('Widgets appearing on family member single pages.', 'chapaneri-heritage'),
+        'before_widget' => '<section id="%1$s" class="widget heritage-card %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h3 class="widget-title font-display">',
+        'after_title'   => '</h3>',
+    ));
 }
 add_action('widgets_init', 'chapaneri_heritage_widgets_init');
+
+/**
+ * AJAX Handler: Member Search
+ */
+function chapaneri_ajax_member_search() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'chapaneri_member_search')) {
+        wp_send_json_error(array('message' => __('Security check failed.', 'chapaneri-heritage')));
+        return;
+    }
+    
+    $query = isset($_POST['query']) ? sanitize_text_field($_POST['query']) : '';
+    
+    if (strlen($query) < 2) {
+        wp_send_json_error(array('message' => __('Query too short.', 'chapaneri-heritage')));
+        return;
+    }
+    
+    // Search family members
+    $args = array(
+        'post_type'      => 'family_member',
+        'posts_per_page' => 10,
+        's'              => $query,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+    );
+    
+    $search_query = new WP_Query($args);
+    $results = array();
+    
+    if ($search_query->have_posts()) {
+        while ($search_query->have_posts()) {
+            $search_query->the_post();
+            
+            $member = chapaneri_get_family_member(get_the_ID());
+            
+            $thumbnail = '';
+            if (has_post_thumbnail()) {
+                $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
+            }
+            
+            $birth_date = '';
+            if ($member['birthDate']) {
+                $birth_date = date('Y', strtotime($member['birthDate']));
+            }
+            
+            $results[] = array(
+                'id'          => get_the_ID(),
+                'name'        => get_the_title(),
+                'url'         => get_permalink(),
+                'thumbnail'   => $thumbnail,
+                'gender'      => $member['gender'],
+                'birth_date'  => $birth_date,
+                'birth_place' => $member['birthPlace'],
+            );
+        }
+        wp_reset_postdata();
+    }
+    
+    wp_send_json_success($results);
+}
+add_action('wp_ajax_chapaneri_member_search', 'chapaneri_ajax_member_search');
+add_action('wp_ajax_nopriv_chapaneri_member_search', 'chapaneri_ajax_member_search');
 
 /**
  * Custom Post Type: Family Member
