@@ -159,10 +159,12 @@ function chapaneri_heritage_widgets_init() {
     // Include widget classes
     require_once get_template_directory() . '/inc/class-widget-family-stats.php';
     require_once get_template_directory() . '/inc/class-widget-featured-members.php';
+    require_once get_template_directory() . '/inc/class-widget-related-members.php';
     
     // Register widgets
     register_widget('Chapaneri_Family_Stats_Widget');
     register_widget('Chapaneri_Featured_Members_Widget');
+    register_widget('Chapaneri_Related_Members_Widget');
     
     // Register sidebars
     register_sidebar(array(
@@ -216,6 +218,12 @@ function chapaneri_heritage_widgets_init() {
     ));
 }
 add_action('widgets_init', 'chapaneri_heritage_widgets_init');
+
+// Include admin dashboard widget
+require_once get_template_directory() . '/inc/class-admin-dashboard-widget.php';
+
+// Include shortcodes
+require_once get_template_directory() . '/inc/shortcodes.php';
 
 /**
  * AJAX Handler: Member Search
