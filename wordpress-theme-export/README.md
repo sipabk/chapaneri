@@ -147,7 +147,7 @@ Navigate to Appearance → Customize:
 
 ## Widgets
 
-The theme includes two custom widgets for displaying family information in sidebars and widget areas:
+The theme includes custom widgets for displaying family information in sidebars and widget areas:
 
 ### Family Statistics Widget
 Displays key family statistics with customizable options:
@@ -164,7 +164,103 @@ Displays family members based on various criteria:
 - **Layout options**: List, Grid, or Compact
 - **Show/hide birth year and location**
 
+### Related Family Members Widget
+Displays family connections for the current member on single member pages:
+- Parents
+- Siblings
+- Spouse
+- Children
+- Only visible on single family member pages
+
 To add widgets: Go to Appearance → Widgets and drag the widgets to your preferred sidebar.
+
+## Admin Dashboard Widget
+
+The theme adds a "Family Heritage Overview" widget to the WordPress admin dashboard featuring:
+- Quick statistics grid (total members, generations, locations, living members)
+- List of 5 most recently added family members with thumbnails
+- Quick links to add new members or view all members
+
+The dashboard widget appears automatically after theme activation.
+
+## Shortcodes
+
+Embed family search and statistics anywhere in posts and pages using shortcodes:
+
+### [family_search]
+Embeds the AJAX-powered family member search box.
+
+**Attributes:**
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `placeholder` | "Search family members..." | Input placeholder text |
+| `min_chars` | 2 | Minimum characters before search triggers |
+| `show_filters` | false | Show generation/gender/location dropdowns |
+
+**Examples:**
+```
+[family_search]
+[family_search placeholder="Find a relative..." min_chars="3"]
+[family_search show_filters="true"]
+```
+
+### [family_stats]
+Displays family statistics.
+
+**Attributes:**
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `layout` | horizontal | Display layout: horizontal, vertical, or grid |
+| `show_total` | true | Show total members count |
+| `show_generations` | true | Show generations count |
+| `show_locations` | true | Show locations count |
+| `show_living` | true | Show living members count |
+
+**Examples:**
+```
+[family_stats]
+[family_stats layout="grid"]
+[family_stats layout="vertical" show_living="false"]
+```
+
+### [family_member]
+Displays a single family member card.
+
+**Attributes:**
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `id` | (required) | The family member post ID |
+| `show_photo` | true | Show member photo |
+| `show_dates` | true | Show birth/death dates |
+| `show_location` | true | Show birthplace |
+
+**Examples:**
+```
+[family_member id="123"]
+[family_member id="123" show_dates="false"]
+```
+
+### [family_members_list]
+Displays a list of family members.
+
+**Attributes:**
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `count` | 6 | Number of members to display |
+| `generation` | (all) | Filter by generation slug |
+| `gender` | (all) | Filter by gender: male/female |
+| `orderby` | name | Order by: name, date, rand |
+| `order` | ASC | Order direction: ASC, DESC |
+| `layout` | grid | Display layout: grid, list |
+| `columns` | 3 | Number of columns for grid layout (1-6) |
+
+**Examples:**
+```
+[family_members_list]
+[family_members_list count="12" generation="first-generation"]
+[family_members_list orderby="rand" count="4" layout="list"]
+[family_members_list columns="4" gender="female"]
+```
 
 ## AJAX Instant Search
 
@@ -179,7 +275,7 @@ The theme includes an AJAX-powered search feature for instant member lookup:
 - Accessible with proper ARIA attributes
 
 ### Usage
-The AJAX search is automatically available on the Search page template. To add it to other templates, use:
+The AJAX search is automatically available on the Search page template. Use the `[family_search]` shortcode to add it anywhere, or manually add the HTML:
 
 ```php
 <div class="ajax-search-container" data-ajax-search data-min-chars="2">
