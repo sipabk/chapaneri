@@ -35,14 +35,26 @@ chapaneri-heritage/
 ├── page-search.php             # Advanced search page template
 ├── single-family_member.php    # Single family member template
 ├── archive-family_member.php   # Family members archive template
+├── template-parts/
+│   └── member-gallery.php      # Photo gallery template part
 ├── inc/
 │   ├── class-widget-family-stats.php    # Family statistics widget
-│   └── class-widget-featured-members.php # Featured members widget
+│   ├── class-widget-featured-members.php # Featured members widget
+│   ├── class-widget-related-members.php  # Related members widget
+│   ├── class-import-export.php           # Import/export functionality
+│   ├── class-admin-dashboard-widget.php  # Admin dashboard widget
+│   ├── shortcodes.php                    # Theme shortcodes
+│   └── blocks/
+│       └── family-member-block.php       # Gutenberg blocks
 ├── assets/
+│   ├── css/
+│   │   ├── admin-import-export.css       # Import/export admin styles
+│   │   └── blocks-editor.css             # Gutenberg block editor styles
 │   └── js/
-│       ├── navigation.js       # Mobile menu & navigation
-│       ├── dark-mode.js        # Dark mode toggle
-│       └── ajax-search.js      # AJAX-powered instant search
+│       ├── navigation.js         # Mobile menu & navigation
+│       ├── dark-mode.js          # Dark mode toggle
+│       ├── ajax-search.js        # AJAX-powered instant search
+│       └── blocks.js             # Gutenberg blocks JavaScript
 └── README.md                   # This file
 ```
 
@@ -93,6 +105,7 @@ Uses CSS custom properties from 0.25rem to 8rem in consistent increments.
 | `_spouse_id` | post ID | Connected spouse |
 | `_parent_ids` | array | Parent connections |
 | `_children_ids` | array | Children connections |
+| `_member_gallery` | array | Photo gallery image IDs |
 
 ### Helper Functions
 
@@ -286,6 +299,79 @@ The AJAX search is automatically available on the Search page template. Use the 
     <div class="ajax-search__results" data-ajax-search-results></div>
 </div>
 ```
+
+## Import/Export
+
+The theme includes a powerful import/export system for backing up and migrating family member data.
+
+### Accessing Import/Export
+
+Navigate to **Family Members → Import/Export** in the WordPress admin menu.
+
+### Export Options
+
+| Format | Description |
+|--------|-------------|
+| **JSON** | Complete data including relationships, taxonomies, and all meta fields. Best for full backups and site migrations. |
+| **CSV** | Spreadsheet-compatible format with basic member data. Good for editing in Excel or Google Sheets. |
+
+**Export Filters:**
+- Include/exclude deceased members
+- Include/exclude photo URLs
+
+### Import Options
+
+| Option | Description |
+|--------|-------------|
+| **Update Existing** | Match members by name and update their data |
+| **Create Relationships** | Automatically link family relationships based on names |
+| **Download Photos** | Download and import photos from URLs in the data |
+
+**Supported Formats:** JSON and CSV files exported from this theme or matching the expected format.
+
+## Gutenberg Blocks
+
+The theme provides visual editor blocks for the Block Editor (Gutenberg):
+
+### Available Blocks
+
+| Block | Description |
+|-------|-------------|
+| **Family Search** | AJAX-powered search box with optional filters |
+| **Family Statistics** | Display family stats in grid, horizontal, or vertical layout |
+| **Family Member** | Show a single family member card |
+| **Family Members List** | Display a filterable grid or list of members |
+
+### Using Blocks
+
+1. Open the page/post in the Block Editor
+2. Click the "+" button to add a block
+3. Search for "Family" or "Chapaneri"
+4. Configure the block options in the sidebar panel
+
+All blocks have live preview in the editor and render dynamically on the frontend.
+
+## Photo Gallery
+
+Each family member can have a photo gallery in addition to their featured image.
+
+### Adding Photos
+
+1. Edit a family member
+2. Scroll to the "Photo Gallery" meta box
+3. Click "Add Images" to select photos from the Media Library
+4. Drag to reorder or click × to remove photos
+5. Save the member
+
+### Gallery Features
+
+- **Main Image Display** - Large main image with navigation
+- **Thumbnail Strip** - Clickable thumbnails for quick navigation
+- **Lightbox** - Full-screen viewing with keyboard navigation
+- **Captions** - Displays image captions when available
+- **Responsive** - Adapts to all screen sizes
+
+The featured image automatically appears as the first gallery photo.
 
 ## Required Plugins (Recommended)
 

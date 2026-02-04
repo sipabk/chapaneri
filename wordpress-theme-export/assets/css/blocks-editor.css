@@ -1,0 +1,139 @@
+/**
+ * Gutenberg Blocks Editor Styles
+ *
+ * @package Chapaneri_Heritage
+ */
+
+/* Block Base Styles */
+.chapaneri-block {
+    padding: 0;
+}
+
+.chapaneri-block .block-preview {
+    background: linear-gradient(135deg, hsl(40, 25%, 97%) 0%, hsl(38, 30%, 93%) 100%);
+    border: 1px solid hsl(35, 25%, 85%);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+}
+
+.chapaneri-block .block-preview__icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, hsl(350, 45%, 35%) 0%, hsl(25, 35%, 28%) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chapaneri-block .block-preview__icon svg {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+    color: #fff;
+}
+
+.chapaneri-block .block-preview h4 {
+    margin: 0 0 8px 0;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: hsl(25, 30%, 12%);
+}
+
+.chapaneri-block .block-preview p {
+    margin: 0;
+    font-size: 13px;
+    color: hsl(25, 15%, 45%);
+    line-height: 1.5;
+}
+
+.chapaneri-block .block-preview .selected-member {
+    color: hsl(350, 45%, 35%);
+    font-weight: 500;
+}
+
+.chapaneri-block .block-preview__settings {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid hsl(35, 25%, 85%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    justify-content: center;
+}
+
+.chapaneri-block .block-preview__settings span {
+    font-size: 11px;
+    color: hsl(25, 15%, 45%);
+    background: hsl(38, 35%, 92%);
+    padding: 4px 10px;
+    border-radius: 100px;
+}
+
+/* Block Selection State */
+.chapaneri-block.is-selected .block-preview {
+    border-color: hsl(350, 45%, 35%);
+    box-shadow: 0 0 0 1px hsl(350, 45%, 35%);
+}
+
+/* Search Block */
+.chapaneri-block--search .block-preview::after {
+    content: '';
+    display: block;
+    margin-top: 16px;
+    height: 40px;
+    background: #fff;
+    border: 1px solid hsl(35, 25%, 85%);
+    border-radius: 6px;
+}
+
+/* Stats Block */
+.chapaneri-block--stats .block-preview::after {
+    content: '';
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.chapaneri-block--stats .block-preview::after {
+    display: flex;
+    gap: 8px;
+}
+
+/* Member Block */
+.chapaneri-block--member .block-preview::after {
+    content: '';
+    display: block;
+    margin: 16px auto 0;
+    width: 64px;
+    height: 64px;
+    background: hsl(38, 35%, 92%);
+    border-radius: 50%;
+}
+
+/* Members List Block */
+.chapaneri-block--members-list .block-preview::after {
+    content: '';
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* Inspector Panel Styles */
+.components-panel__body .components-toggle-control {
+    margin-bottom: 16px;
+}
+
+.components-panel__body .components-select-control {
+    margin-bottom: 16px;
+}
+
+/* Block Category Icon */
+.block-editor-block-types-list__list-item[data-type^="chapaneri/"] .block-editor-block-types-list__item-icon {
+    color: hsl(350, 45%, 35%);
+}

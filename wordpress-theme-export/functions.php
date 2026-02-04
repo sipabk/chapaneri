@@ -225,6 +225,12 @@ require_once get_template_directory() . '/inc/class-admin-dashboard-widget.php';
 // Include shortcodes
 require_once get_template_directory() . '/inc/shortcodes.php';
 
+// Include import/export functionality
+require_once get_template_directory() . '/inc/class-import-export.php';
+
+// Include Gutenberg blocks
+require_once get_template_directory() . '/inc/blocks/family-member-block.php';
+
 /**
  * AJAX Handler: Member Search
  */
@@ -423,8 +429,137 @@ function chapaneri_heritage_add_family_member_meta_boxes() {
         'normal',
         'default'
     );
+    
+    add_meta_box(
+        'family_member_gallery',
+        __('Photo Gallery', 'chapaneri-heritage'),
+        'chapaneri_heritage_family_member_gallery_callback',
+        'family_member',
+        'normal',
+        'default'
+    );
 }
 add_action('add_meta_boxes', 'chapaneri_heritage_add_family_member_meta_boxes');
+
+/**
+ * Meta Box Callback: Photo Gallery
+ */
+function chapaneri_heritage_family_member_gallery_callback($post) {
+    $gallery_ids = get_post_meta($post->ID, '_member_gallery', true);
+    if (!is_array($gallery_ids)) {
+        $gallery_ids = array();
+    }
+    
+    wp_enqueue_media();
+    ?>
+    <div class="member-gallery-admin">
+        <p class="description"><?php _e('Add photos to this family member\'s gallery. The featured image will automatically be included as the first photo.', 'chapaneri-heritage'); ?></p>
+        
+        <div id="gallery-images" class="gallery-images-container">
+            <?php foreach ($gallery_ids as $image_id) : 
+                $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+                if ($image_url) :
+            ?>
+                <div class="gallery-image-item" data-id="<?php echo esc_attr($image_id); ?>">
+                    <img src="<?php echo esc_url($image_url); ?>" alt="">
+                    <button type="button" class="remove-gallery-image" aria-label="<?php esc_attr_e('Remove image', 'chapaneri-heritage'); ?>">&times;</button>
+                    <input type="hidden" name="member_gallery[]" value="<?php echo esc_attr($image_id); ?>">
+                </div>
+            <?php endif; endforeach; ?>
+        </div>
+        
+        <button type="button" class="button button-secondary" id="add-gallery-images">
+            <span class="dashicons dashicons-plus-alt2" style="vertical-align: middle;"></span>
+            <?php _e('Add Images', 'chapaneri-heritage'); ?>
+        </button>
+    </div>
+    
+    <style>
+        .gallery-images-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .gallery-image-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+        .gallery-image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .remove-gallery-image {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            padding: 0;
+        }
+        .remove-gallery-image:hover {
+            background: #c82333;
+        }
+    </style>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        var frame;
+        
+        $('#add-gallery-images').on('click', function(e) {
+            e.preventDefault();
+            
+            if (frame) {
+                frame.open();
+                return;
+            }
+            
+            frame = wp.media({
+                title: '<?php echo esc_js(__('Select Gallery Images', 'chapaneri-heritage')); ?>',
+                button: { text: '<?php echo esc_js(__('Add to Gallery', 'chapaneri-heritage')); ?>' },
+                multiple: true
+            });
+            
+            frame.on('select', function() {
+                var attachments = frame.state().get('selection').toJSON();
+                var container = $('#gallery-images');
+                
+                attachments.forEach(function(attachment) {
+                    var thumbnail = attachment.sizes && attachment.sizes.thumbnail 
+                        ? attachment.sizes.thumbnail.url 
+                        : attachment.url;
+                    
+                    var html = '<div class="gallery-image-item" data-id="' + attachment.id + '">' +
+                        '<img src="' + thumbnail + '" alt="">' +
+                        '<button type="button" class="remove-gallery-image" aria-label="<?php echo esc_js(__('Remove image', 'chapaneri-heritage')); ?>">&times;</button>' +
+                        '<input type="hidden" name="member_gallery[]" value="' + attachment.id + '">' +
+                        '</div>';
+                    
+                    container.append(html);
+                });
+            });
+            
+            frame.open();
+        });
+        
+        $(document).on('click', '.remove-gallery-image', function() {
+            $(this).closest('.gallery-image-item').remove();
+        });
+    });
+    </script>
+    <?php
+}
 
 /**
  * Meta Box Callback: Member Details
@@ -581,6 +716,13 @@ function chapaneri_heritage_save_family_member_meta($post_id) {
         update_post_meta($post_id, '_children_ids', array_map('intval', $_POST['children_ids']));
     } else {
         delete_post_meta($post_id, '_children_ids');
+    }
+    
+    // Save gallery
+    if (isset($_POST['member_gallery']) && is_array($_POST['member_gallery'])) {
+        update_post_meta($post_id, '_member_gallery', array_map('intval', $_POST['member_gallery']));
+    } else {
+        delete_post_meta($post_id, '_member_gallery');
     }
 }
 add_action('save_post_family_member', 'chapaneri_heritage_save_family_member_meta');

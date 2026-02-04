@@ -145,6 +145,11 @@ while (have_posts()) : the_post();
                         </div>
                     </div>
                 <?php endif; ?>
+                
+                <?php 
+                // Include photo gallery template part
+                get_template_part('template-parts/member', 'gallery'); 
+                ?>
             </div>
         </div>
         
