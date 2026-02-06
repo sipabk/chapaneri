@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, TreeDeciduous, Users, Clock, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -17,12 +18,12 @@ export const Header = () => {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border/50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-heritage group-hover:shadow-glow transition-shadow duration-300">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-heritage group-hover:shadow-glow transition-all duration-300 group-hover:scale-110">
               <TreeDeciduous className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
@@ -38,7 +39,7 @@ export const Header = () => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              
+
               return (
                 <Link
                   key={item.path}
@@ -57,14 +58,15 @@ export const Header = () => {
             })}
           </nav>
 
-          {/* Search & Mobile Menu */}
-          <div className="flex items-center gap-2">
+          {/* Search, Theme & Mobile Menu */}
+          <div className="flex items-center gap-1">
+            <ThemeSwitcher />
             <Link to="/search">
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                 <Search className="w-5 h-5" />
               </Button>
             </Link>
-            
+
             <Button
               variant="ghost"
               size="icon"
@@ -82,7 +84,7 @@ export const Header = () => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              
+
               return (
                 <Link
                   key={item.path}
