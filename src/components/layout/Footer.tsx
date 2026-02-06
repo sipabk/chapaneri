@@ -1,11 +1,14 @@
-import { TreeDeciduous, Heart } from "lucide-react";
+import { TreeDeciduous, Heart, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTheme, themes, ThemeName } from "@/contexts/ThemeContext";
 
 export const Footer = () => {
+  const { theme } = useTheme();
+
   return (
     <footer className="bg-secondary/50 border-t border-border">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -20,7 +23,7 @@ export const Footer = () => {
               </div>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Preserving our family history for generations to come. 
+              Preserving our family history for generations to come.
               Every story matters, every connection counts.
             </p>
           </div>
@@ -43,7 +46,33 @@ export const Footer = () => {
               <Link to="/places" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Places
               </Link>
+              <Link to="/search" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                Search
+              </Link>
             </nav>
+          </div>
+
+          {/* Active Theme */}
+          <div className="space-y-4">
+            <h4 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
+              <Palette className="w-4 h-4" />
+              Current Theme
+            </h4>
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                {themes[theme].preview.map((color, i) => (
+                  <div
+                    key={i}
+                    className="w-4 h-4 rounded-full border border-border/50"
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
+              <span className="text-sm text-muted-foreground">{themes[theme].label}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Switch themes using the palette icon in the navigation bar.
+            </p>
           </div>
 
           {/* Family Info */}
@@ -52,7 +81,7 @@ export const Footer = () => {
               About This Archive
             </h4>
             <p className="text-sm text-muted-foreground">
-              This genealogy archive documents the Chapaneri family heritage, 
+              This genealogy archive documents the Chapaneri family heritage,
               tracing our roots through generations across India and beyond.
             </p>
             <p className="text-sm text-muted-foreground">
@@ -64,7 +93,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Chapaneri Family Archive
+            © {new Date().getFullYear()} Chapaneri Family Archive — v2.0
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
             Made with <Heart className="w-4 h-4 text-primary" /> for family

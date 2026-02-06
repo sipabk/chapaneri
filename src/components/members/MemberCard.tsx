@@ -20,8 +20,8 @@ export const MemberCard = ({ member, variant = 'default' }: MemberCardProps) => 
       >
         <div className={cn(
           "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-          member.gender === 'male' 
-            ? "bg-primary/10 text-primary" 
+          member.gender === 'male'
+            ? "bg-primary/10 text-primary"
             : "bg-accent/10 text-accent"
         )}>
           <User className="w-5 h-5" />
@@ -41,9 +41,9 @@ export const MemberCard = ({ member, variant = 'default' }: MemberCardProps) => 
     >
       {/* Avatar */}
       <div className={cn(
-        "w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center shadow-card",
-        member.gender === 'male' 
-          ? "bg-gradient-to-br from-primary to-primary/80" 
+        "w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center shadow-card transition-transform duration-300 group-hover:scale-110",
+        member.gender === 'male'
+          ? "bg-gradient-to-br from-primary to-primary/80"
           : "bg-gradient-to-br from-accent to-accent/80"
       )}>
         <User className={cn(
@@ -57,7 +57,7 @@ export const MemberCard = ({ member, variant = 'default' }: MemberCardProps) => 
         <h3 className="font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
           {member.name}
         </h3>
-        
+
         <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
           {member.relationship}
         </span>
