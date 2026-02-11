@@ -3,7 +3,7 @@
  * Chapaneri Family Heritage Theme Functions
  *
  * @package Chapaneri_Heritage
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 if (!defined('ABSPATH')) {
@@ -126,10 +126,10 @@ function chapaneri_heritage_scripts() {
         true
     );
     
-    // Dark mode toggle
+    // Multi-theme switcher (v2.0 - replaces dark mode toggle)
     wp_enqueue_script(
-        'chapaneri-heritage-dark-mode',
-        get_template_directory_uri() . '/assets/js/dark-mode.js',
+        'chapaneri-heritage-theme-switcher',
+        get_template_directory_uri() . '/assets/js/theme-switcher.js',
         array(),
         wp_get_theme()->get('Version'),
         true

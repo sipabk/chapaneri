@@ -3,8 +3,8 @@ Theme Name: Chapaneri Family Heritage
 Theme URI: https://chapaneri.lovable.app
 Author: Chapaneri Family
 Author URI: https://chapaneri.lovable.app
-Description: A heritage-inspired family archive theme featuring warm burgundy and gold palette with elegant typography.
-Version: 1.0.0
+Description: A heritage-inspired family archive theme with 6 color themes, advanced search, photo galleries, and elegant typography. Version 2.0 features multi-theme support (Heritage, Ocean, Forest, Royal, Sunset, Midnight).
+Version: 2.0.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: chapaneri-heritage
@@ -186,37 +186,169 @@ Based on the React application design system.
 }
 
 /* ==========================================================================
-   DARK MODE
+   MULTI-THEME SUPPORT (v2.0)
+   Theme colors are applied dynamically via JavaScript.
+   The midnight theme serves as the dark mode equivalent.
    ========================================================================== */
 
+/* Theme Switcher Dropdown */
+.theme-switcher {
+  position: relative;
+}
+
+.theme-switcher__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+}
+
+.theme-switcher__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.theme-switcher__dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-2);
+  z-index: var(--z-dropdown);
+}
+
+.theme-switcher__dropdown.active {
+  display: block;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground);
+  transition: background-color var(--transition-base);
+}
+
+.theme-option:hover {
+  background-color: var(--color-secondary);
+}
+
+.theme-option.active {
+  background-color: var(--color-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.theme-option__colors {
+  display: flex;
+  gap: 2px;
+}
+
+.theme-option__colors span {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid hsla(0, 0%, 0%, 0.1);
+}
+
+.theme-option__name {
+  flex: 1;
+  text-align: left;
+}
+
+/* Site Logo v2.0 */
+.site-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  text-decoration: none;
+  color: var(--color-foreground);
+}
+
+.site-logo__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-foreground);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-logo:hover .site-logo__icon {
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.1);
+}
+
+.site-logo__text {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .site-logo__text {
+    display: block;
+  }
+}
+
+.site-logo__name {
+  display: block;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.site-logo__tagline {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin-top: -2px;
+}
+
+/* Footer version badge */
+.footer-version {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  background-color: var(--color-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-top: var(--spacing-2);
+}
+
+/* Legacy dark mode support */
 .dark,
 [data-theme="dark"] {
   --color-background: hsl(25, 25%, 8%);
   --color-foreground: hsl(40, 15%, 92%);
-  
   --color-card: hsl(25, 22%, 12%);
   --color-card-foreground: hsl(40, 15%, 92%);
-  
   --color-popover: hsl(25, 22%, 12%);
   --color-popover-foreground: hsl(40, 15%, 92%);
-  
-  /* Primary becomes Gold in dark mode */
   --color-primary: hsl(42, 75%, 55%);
   --color-primary-foreground: hsl(25, 30%, 10%);
-  
   --color-secondary: hsl(25, 20%, 18%);
   --color-secondary-foreground: hsl(40, 15%, 88%);
-  
   --color-muted: hsl(25, 18%, 16%);
   --color-muted-foreground: hsl(35, 12%, 55%);
-  
-  /* Accent becomes Burgundy in dark mode */
   --color-accent: hsl(350, 40%, 45%);
   --color-accent-foreground: hsl(40, 15%, 92%);
-  
   --color-destructive: hsl(0, 55%, 45%);
   --color-destructive-foreground: hsl(40, 15%, 92%);
-  
   --color-border: hsl(25, 18%, 20%);
   --color-input: hsl(25, 18%, 20%);
   --color-ring: hsl(42, 75%, 55%);
