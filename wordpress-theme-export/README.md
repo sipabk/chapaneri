@@ -1,14 +1,14 @@
-# Chapaneri Family Heritage - WordPress Theme
+# Chapaneri Family Heritage - WordPress Theme v2.0
 
-A heritage-inspired WordPress theme for family genealogy and archive websites. Features a warm burgundy and gold color palette with elegant typography.
+A heritage-inspired WordPress theme for family genealogy and archive websites. Version 2.0 features **6 switchable color themes** (Heritage, Ocean, Forest, Royal, Sunset, Midnight), advanced search, photo galleries, import/export, and Gutenberg blocks.
 
 ## Features
 
+- **6 Color Themes**: Heritage (burgundy/gold), Ocean (blue/cyan), Forest (green), Royal (purple), Sunset (orange), Midnight (dark blue) — switchable from the header
 - **Custom Post Type: Family Member** - Full-featured family member management with relationships
 - **Taxonomies**: Generation and Relationship classification
 - **Custom Meta Fields**: Birth/death dates, locations, contact info, family connections
 - **Customizer Settings**: Hero section content, background images, statistics display
-- **Dark Mode**: Built-in dark mode toggle with localStorage persistence
 - **Responsive Design**: Mobile-first approach with adaptive layouts
 - **Accessibility**: WCAG-compliant with proper ARIA labels and keyboard navigation
 
@@ -52,7 +52,7 @@ chapaneri-heritage/
 │   │   └── blocks-editor.css             # Gutenberg block editor styles
 │   └── js/
 │       ├── navigation.js         # Mobile menu & navigation
-│       ├── dark-mode.js          # Dark mode toggle
+│       ├── theme-switcher.js     # Multi-theme color switcher (6 themes)
 │       ├── ajax-search.js        # AJAX-powered instant search
 │       └── blocks.js             # Gutenberg blocks JavaScript
 └── README.md                   # This file

@@ -3,6 +3,7 @@
  * The footer template
  *
  * @package Chapaneri_Heritage
+ * @version 2.0.0
  */
 ?>
     </main><!-- #primary -->
@@ -18,6 +19,7 @@
                     <p class="footer-description">
                         <?php echo esc_html(get_bloginfo('description')); ?>
                     </p>
+                    <span class="footer-version">v2.0</span>
                 </div>
 
                 <!-- Quick Links -->
