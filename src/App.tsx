@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Members from "./pages/Members";
 import MemberDetail from "./pages/MemberDetail";
 import FamilyTree from "./pages/FamilyTree";
+import PrintableTree from "./pages/PrintableTree";
 import Timeline from "./pages/Timeline";
 import Places from "./pages/Places";
 import SearchPage from "./pages/SearchPage";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/members" element={<Members />} />
             <Route path="/member/:id" element={<MemberDetail />} />
             <Route path="/tree" element={<FamilyTree />} />
+            <Route path="/tree/print" element={<PrintableTree />} />
             <Route path="/timeline" element={<Timeline />} />
             <Route path="/places" element={<Places />} />
             <Route path="/search" element={<SearchPage />} />

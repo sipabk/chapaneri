@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TreeDeciduous, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { TreeDeciduous, ZoomIn, ZoomOut, Maximize2, Printer } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FamilyTreeNode } from "@/components/tree/FamilyTreeNode";
@@ -70,6 +71,11 @@ const FamilyTree = () => {
               <Button variant="outline" size="icon" onClick={handleReset}>
                 <Maximize2 className="w-4 h-4" />
               </Button>
+              <Link to="/tree/print">
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <Printer className="w-4 h-4" /> Print
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
