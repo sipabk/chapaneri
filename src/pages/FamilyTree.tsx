@@ -57,9 +57,18 @@ const FamilyTree = () => {
         {/* Zoom Controls */}
         <div className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Centered on: <span className="font-medium text-foreground">{rootMember.name}</span>
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-muted-foreground">
+                Centered on: <span className="font-medium text-foreground">{rootMember.name}</span>
+              </p>
+              {highlightId && (
+                <Link to="/tree">
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                    ← Back to Full Tree
+                  </Button>
+                </Link>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="icon" onClick={handleZoomOut} disabled={zoom <= 0.5}>
                 <ZoomOut className="w-4 h-4" />
