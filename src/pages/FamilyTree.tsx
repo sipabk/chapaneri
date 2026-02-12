@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { TreeDeciduous, ZoomIn, ZoomOut, Maximize2, Printer } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -9,9 +9,11 @@ import { getMemberById } from "@/data/familyData";
 
 const FamilyTree = () => {
   const [zoom, setZoom] = useState(1);
+  const [searchParams] = useSearchParams();
+  const highlightId = searchParams.get("highlight");
   
-  // Start with the main subject - Jitendra (id: 12)
-  const rootMember = getMemberById(12);
+  // Use highlighted member if provided, otherwise default to Jitendra (id: 12)
+  const rootMember = getMemberById(highlightId ? Number(highlightId) : 12);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.1, 1.5));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.1, 0.5));
