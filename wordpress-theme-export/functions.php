@@ -918,11 +918,18 @@ function chapaneri_get_family_stats() {
     $unique_places = array_unique(array_filter(wp_list_pluck($members, 'birthPlace')));
     $marriages = count(array_filter(wp_list_pluck($members, 'spouseId'))) / 2;
     
+    $total = count($members);
+    $living = count(array_filter($members, function($m) {
+        return empty($m['deathDate']);
+    }));
+    
     return array(
-        'totalMembers'  => count($members),
+        'totalMembers'  => $total,
+        'total'         => $total,
         'generations'   => count($generations),
         'places'        => count($unique_places),
         'marriages'     => intval($marriages),
+        'living'        => $living,
     );
 }
 

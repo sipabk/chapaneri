@@ -36,8 +36,17 @@ class Chapaneri_Family_Stats_Widget extends WP_Widget {
         $show_living = isset($instance['show_living']) ? (bool) $instance['show_living'] : true;
         $layout = !empty($instance['layout']) ? $instance['layout'] : 'vertical';
         
-        // Get stats
-        $stats = chapaneri_get_family_stats();
+        // Get stats - use function if available, otherwise calculate directly
+        if (function_exists('chapaneri_get_family_stats')) {
+            $stats = chapaneri_get_family_stats();
+        } else {
+            $member_count = wp_count_posts('family_member');
+            $stats = array(
+                'totalMembers' => isset($member_count->publish) ? $member_count->publish : 0,
+                'total'        => isset($member_count->publish) ? $member_count->publish : 0,
+                'living'       => 0,
+            );
+        }
         
         $generations = get_terms(array(
             'taxonomy'   => 'generation',

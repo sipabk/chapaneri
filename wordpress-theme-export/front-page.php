@@ -16,7 +16,19 @@ $hero_bg_url = $hero_bg_id ? wp_get_attachment_image_url($hero_bg_id, 'full') : 
 $show_stats = get_theme_mod('show_stats', true);
 
 // Get family statistics
-$stats = chapaneri_get_family_stats();
+if (function_exists('chapaneri_get_family_stats')) {
+    $stats = chapaneri_get_family_stats();
+} else {
+    $member_count = wp_count_posts('family_member');
+    $stats = array(
+        'totalMembers' => isset($member_count->publish) ? $member_count->publish : 0,
+        'total'        => isset($member_count->publish) ? $member_count->publish : 0,
+        'generations'  => 0,
+        'places'       => 0,
+        'marriages'    => 0,
+        'living'       => 0,
+    );
+}
 ?>
 
 <!-- Hero Section -->
