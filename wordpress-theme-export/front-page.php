@@ -118,11 +118,11 @@ if (function_exists('chapaneri_get_family_stats')) {
         </header>
         
         <?php
-        $featured_members = chapaneri_get_all_family_members(array(
+        $featured_members = function_exists('chapaneri_get_all_family_members') ? chapaneri_get_all_family_members(array(
             'posts_per_page' => 6,
             'orderby'        => 'menu_order',
             'order'          => 'ASC',
-        ));
+        )) : array();
         ?>
         
         <?php if (!empty($featured_members)) : ?>

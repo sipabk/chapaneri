@@ -28,7 +28,7 @@ add_action('wp_dashboard_setup', 'chapaneri_register_dashboard_widget');
  */
 function chapaneri_dashboard_widget_display() {
     // Get statistics
-    $stats = chapaneri_get_family_stats();
+    $stats = function_exists('chapaneri_get_family_stats') ? chapaneri_get_family_stats() : array('total' => 0, 'living' => 0, 'totalMembers' => 0, 'generations' => 0, 'places' => 0, 'marriages' => 0);
     
     // Get generations count
     $generations = get_terms(array(

@@ -330,7 +330,7 @@ sort($locations);
                 <p><?php esc_html_e('Use the instant search above for quick lookups, or apply filters for more specific results.', 'chapaneri-heritage'); ?></p>
                 
                 <div class="search-quick-stats">
-                    <?php $stats = chapaneri_get_family_stats(); ?>
+                    <?php $stats = function_exists('chapaneri_get_family_stats') ? chapaneri_get_family_stats() : array('total' => 0, 'living' => 0, 'totalMembers' => 0, 'generations' => 0, 'places' => 0, 'marriages' => 0); ?>
                     <div class="search-quick-stat">
                         <span class="search-quick-stat__value"><?php echo esc_html($stats['total']); ?></span>
                         <span class="search-quick-stat__label"><?php esc_html_e('Total Members', 'chapaneri-heritage'); ?></span>
