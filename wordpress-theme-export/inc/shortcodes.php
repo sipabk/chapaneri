@@ -149,7 +149,7 @@ function chapaneri_shortcode_family_stats($atts) {
     $show_living = filter_var($atts['show_living'], FILTER_VALIDATE_BOOLEAN);
     
     // Get stats
-    $stats = chapaneri_get_family_stats();
+    $stats = function_exists('chapaneri_get_family_stats') ? chapaneri_get_family_stats() : array('total' => 0, 'living' => 0, 'totalMembers' => 0, 'generations' => 0, 'places' => 0, 'marriages' => 0);
     
     $generations = get_terms(array(
         'taxonomy'   => 'generation',

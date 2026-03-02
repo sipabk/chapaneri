@@ -12,6 +12,7 @@ import PrintableTree from "./pages/PrintableTree";
 import Timeline from "./pages/Timeline";
 import Places from "./pages/Places";
 import SearchPage from "./pages/SearchPage";
+import DownloadTheme from "./pages/DownloadTheme";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/timeline" element={<Timeline />} />
             <Route path="/places" element={<Places />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/download-theme" element={<DownloadTheme />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
