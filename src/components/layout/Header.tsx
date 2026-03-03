@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, TreeDeciduous, Users, Clock, MapPin, Search } from "lucide-react";
+import { Menu, X, TreeDeciduous, Users, Clock, MapPin, Search, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 import { cn } from "@/lib/utils";
@@ -64,6 +64,11 @@ export const Header = () => {
             <Link to="/search">
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                 <Search className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link to="/download-theme">
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                <Download className="w-5 h-5" />
               </Button>
             </Link>
 
