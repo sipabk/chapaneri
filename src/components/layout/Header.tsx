@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, TreeDeciduous, Users, Clock, MapPin, Search, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -71,6 +72,7 @@ export const Header = () => {
                 <Download className="w-5 h-5" />
               </Button>
             </Link>
+            <UserMenu />
 
             <Button
               variant="ghost"
