@@ -72,6 +72,7 @@ export const Header = () => {
                 <Download className="w-5 h-5" />
               </Button>
             </Link>
+            <UserMenu />
 
             <Button
               variant="ghost"
