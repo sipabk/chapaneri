@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { TreeDeciduous, Users, ArrowRight, Sparkles } from "lucide-react";
+import { TreeDeciduous, Users, ArrowRight, Sparkles, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import heroCrest from "@/assets/hero-crest.jpg";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const HeroSection = () => {
   return (
