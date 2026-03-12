@@ -6,6 +6,7 @@ import heroCrest from "@/assets/hero-crest.jpg";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const HeroSection = () => {
+  const { user } = useAuth();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
