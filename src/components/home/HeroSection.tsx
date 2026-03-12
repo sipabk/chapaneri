@@ -114,19 +114,31 @@ export const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="flex flex-col sm:flex-row justify-center gap-4 pt-6"
           >
-            <Link to="/tree">
-              <Button size="lg" className="w-full sm:w-auto gap-2 shadow-heritage hover:shadow-glow transition-all duration-300 hover:scale-105">
-                <TreeDeciduous className="w-5 h-5" />
-                Explore Family Tree
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <Link to="/members">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 hover:scale-105 transition-all duration-300">
-                <Users className="w-5 h-5" />
-                View All Members
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/tree">
+                  <Button size="lg" className="w-full sm:w-auto gap-2 shadow-heritage hover:shadow-glow transition-all duration-300 hover:scale-105">
+                    <TreeDeciduous className="w-5 h-5" />
+                    Explore Family Tree
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link to="/family-members">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 hover:scale-105 transition-all duration-300">
+                    <Users className="w-5 h-5" />
+                    View All Members
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button size="lg" className="w-full sm:w-auto gap-2 shadow-heritage hover:shadow-glow transition-all duration-300 hover:scale-105">
+                  <LogIn className="w-5 h-5" />
+                  Sign In to Access
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            )}
           </motion.div>
         </div>
 
