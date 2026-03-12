@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
+import FamilyMembersPage from "./pages/FamilyMembersPage";
 import Members from "./pages/Members";
 import MemberDetail from "./pages/MemberDetail";
 import FamilyTree from "./pages/FamilyTree";
@@ -31,25 +32,62 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/pending" element={<PendingApproval />} />
-              <Route path="/members" element={<Members />} />
-              <Route path="/member/:id" element={<MemberDetail />} />
-              <Route path="/tree" element={<FamilyTree />} />
-              <Route path="/tree/print" element={<PrintableTree />} />
-              <Route path="/timeline" element={<Timeline />} />
-              <Route path="/places" element={<Places />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/download-theme" element={<DownloadTheme />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute requiredRole="admin">
-                    <AdminPanel />
-                  </ProtectedRoute>
-                }
-              />
+
+              {/* Protected routes - require authenticated + approved user */}
+              <Route path="/family-members" element={
+                <ProtectedRoute>
+                  <FamilyMembersPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/members" element={
+                <ProtectedRoute>
+                  <Members />
+                </ProtectedRoute>
+              } />
+              <Route path="/member/:id" element={
+                <ProtectedRoute>
+                  <MemberDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="/tree" element={
+                <ProtectedRoute>
+                  <FamilyTree />
+                </ProtectedRoute>
+              } />
+              <Route path="/tree/print" element={
+                <ProtectedRoute>
+                  <PrintableTree />
+                </ProtectedRoute>
+              } />
+              <Route path="/timeline" element={
+                <ProtectedRoute>
+                  <Timeline />
+                </ProtectedRoute>
+              } />
+              <Route path="/places" element={
+                <ProtectedRoute>
+                  <Places />
+                </ProtectedRoute>
+              } />
+              <Route path="/search" element={
+                <ProtectedRoute>
+                  <SearchPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/download-theme" element={
+                <ProtectedRoute requiredRole="admin">
+                  <DownloadTheme />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminPanel />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

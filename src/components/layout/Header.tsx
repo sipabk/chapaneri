@@ -1,22 +1,28 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, TreeDeciduous, Users, Clock, MapPin, Search, Download } from "lucide-react";
+import { Menu, X, TreeDeciduous, Users, Clock, MapPin, Search, Download, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { path: "/", label: "Home", icon: TreeDeciduous },
-  { path: "/tree", label: "Family Tree", icon: TreeDeciduous },
-  { path: "/members", label: "Members", icon: Users },
-  { path: "/timeline", label: "Timeline", icon: Clock },
-  { path: "/places", label: "Places", icon: MapPin },
-];
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, isAdmin } = useAuth();
+
+  const navItems = user
+    ? [
+        { path: "/", label: "Home", icon: TreeDeciduous },
+        { path: "/tree", label: "Family Tree", icon: TreeDeciduous },
+        { path: "/family-members", label: "Members", icon: Users },
+        { path: "/timeline", label: "Timeline", icon: Clock },
+        { path: "/places", label: "Places", icon: MapPin },
+      ]
+    : [
+        { path: "/", label: "Home", icon: TreeDeciduous },
+      ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border/50 shadow-sm">
@@ -40,7 +46,6 @@ export const Header = () => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-
               return (
                 <Link
                   key={item.path}
@@ -59,21 +64,31 @@ export const Header = () => {
             })}
           </nav>
 
-          {/* Search, Theme & Mobile Menu */}
+          {/* Actions */}
           <div className="flex items-center gap-1">
             <ThemeSwitcher />
-            <Link to="/search">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                <Search className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Link to="/download-theme">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                <Download className="w-5 h-5" />
-              </Button>
-            </Link>
+            {user && (
+              <Link to="/search">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                  <Search className="w-5 h-5" />
+                </Button>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/download-theme">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                  <Download className="w-5 h-5" />
+                </Button>
+              </Link>
+            )}
+            {!user && (
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <UserPlus className="w-4 h-4" /> Sign In
+                </Button>
+              </Link>
+            )}
             <UserMenu />
-
             <Button
               variant="ghost"
               size="icon"
@@ -91,7 +106,6 @@ export const Header = () => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-
               return (
                 <Link
                   key={item.path}
