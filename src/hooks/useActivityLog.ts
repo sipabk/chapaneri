@@ -23,15 +23,15 @@ export const useActivityLog = () => {
     changes: Record<string, unknown> = {}
   ) => {
     if (!user) return;
-    await supabase.from("activity_logs").insert({
+    await supabase.from("activity_logs").insert([{
       action_type: actionType,
-      entity_type: "family_member",
+      entity_type: "family_member" as string,
       entity_id: entityId,
       entity_name: entityName,
       performed_by: user.id,
       performed_by_email: profile?.email || user.email || "",
-      changes,
-    });
+      changes: changes as any,
+    }]);
   };
 
   const fetchLogs = async (filters?: {

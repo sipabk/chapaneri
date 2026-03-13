@@ -9,7 +9,7 @@ import { useActivityLog, ActivityLog } from "@/hooks/useActivityLog";
 
 const actionBadge = (type: string) => {
   switch (type) {
-    case "create": return <Badge className="bg-green-600 text-white">Created</Badge>;
+    case "create": return <Badge className="bg-primary text-primary-foreground">Created</Badge>;
     case "update": return <Badge variant="secondary">Updated</Badge>;
     case "delete": return <Badge variant="destructive">Deleted</Badge>;
     default: return <Badge variant="outline">{type}</Badge>;
