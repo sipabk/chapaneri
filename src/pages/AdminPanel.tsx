@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -19,7 +20,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, UserCheck, UserX, Trash2, Loader2 } from "lucide-react";
+import { Shield, UserCheck, Trash2, Loader2 } from "lucide-react";
+import { ActivityLogPanel } from "@/components/admin/ActivityLogPanel";
 
 interface UserWithRole {
   user_id: string;
@@ -29,16 +31,6 @@ interface UserWithRole {
   role: AppRole;
   role_id: string;
 }
-
-const roleBadgeVariant = (role: AppRole) => {
-  switch (role) {
-    case "admin": return "default";
-    case "editor": return "secondary";
-    case "viewer": return "outline";
-    case "pending": return "destructive";
-    default: return "outline";
-  }
-};
 
 const AdminPanel = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -84,8 +76,6 @@ const AdminPanel = () => {
       toast({ title: "Cannot remove your own admin role", variant: "destructive" });
       return;
     }
-
-    // Delete old role and insert new one
     if (oldRoleId) {
       await supabase.from("user_roles").delete().eq("id", oldRoleId);
     }
@@ -93,7 +83,6 @@ const AdminPanel = () => {
       user_id: targetUserId,
       role: newRole,
     });
-
     if (error) {
       toast({ title: "Failed to update role", description: error.message, variant: "destructive" });
     } else {
@@ -107,12 +96,10 @@ const AdminPanel = () => {
       toast({ title: "Cannot delete yourself", variant: "destructive" });
       return;
     }
-    // Delete role (profile will cascade from auth.users deletion - but we can only delete roles)
     const { error } = await supabase.from("user_roles").delete().eq("user_id", targetUserId);
     if (error) {
       toast({ title: "Failed to remove user role", description: error.message, variant: "destructive" });
     } else {
-      // Also delete profile
       await supabase.from("profiles").delete().eq("user_id", targetUserId);
       toast({ title: "User role and profile removed" });
       fetchUsers();
@@ -130,7 +117,7 @@ const AdminPanel = () => {
             <Shield className="w-8 h-8 text-primary" />
             <div>
               <h1 className="font-display text-3xl font-bold text-foreground">Admin Panel</h1>
-              <p className="text-muted-foreground">Manage users and their permissions</p>
+              <p className="text-muted-foreground">Manage users, permissions, and view activity</p>
             </div>
             {pendingCount > 0 && (
               <Badge variant="destructive" className="ml-auto text-sm">
@@ -139,105 +126,118 @@ const AdminPanel = () => {
             )}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserCheck className="w-5 h-5" />
-                Registered Users ({users.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {fetching ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Registered</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {users.map((u) => (
-                      <TableRow key={u.user_id}>
-                        <TableCell className="font-medium">{u.full_name || "—"}</TableCell>
-                        <TableCell>{u.email}</TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
-                          {new Date(u.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={u.role}
-                            onValueChange={(val) => handleRoleChange(u.user_id, val as AppRole, u.role_id)}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pending">
-                                <Badge variant="destructive" className="text-xs">Pending</Badge>
-                              </SelectItem>
-                              <SelectItem value="viewer">
-                                <Badge variant="outline" className="text-xs">Viewer</Badge>
-                              </SelectItem>
-                              <SelectItem value="editor">
-                                <Badge variant="secondary" className="text-xs">Editor</Badge>
-                              </SelectItem>
-                              <SelectItem value="admin">
-                                <Badge variant="default" className="text-xs">Admin</Badge>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          {u.user_id !== user.id && (
-                            <div className="flex gap-2">
-                              {u.role === "pending" && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="gap-1"
-                                  onClick={() => handleRoleChange(u.user_id, "viewer", u.role_id)}
-                                >
-                                  <UserCheck className="w-3 h-3" /> Approve
-                                </Button>
+          <Tabs defaultValue="users" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="activity">Activity Log</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="users">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserCheck className="w-5 h-5" />
+                    Registered Users ({users.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {fetching ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Registered</TableHead>
+                          <TableHead>Role</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((u) => (
+                          <TableRow key={u.user_id}>
+                            <TableCell className="font-medium">{u.full_name || "—"}</TableCell>
+                            <TableCell>{u.email}</TableCell>
+                            <TableCell className="text-muted-foreground text-sm">
+                              {new Date(u.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={u.role}
+                                onValueChange={(val) => handleRoleChange(u.user_id, val as AppRole, u.role_id)}
+                              >
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="pending">
+                                    <Badge variant="destructive" className="text-xs">Pending</Badge>
+                                  </SelectItem>
+                                  <SelectItem value="viewer">
+                                    <Badge variant="outline" className="text-xs">Viewer</Badge>
+                                  </SelectItem>
+                                  <SelectItem value="editor">
+                                    <Badge variant="secondary" className="text-xs">Editor</Badge>
+                                  </SelectItem>
+                                  <SelectItem value="admin">
+                                    <Badge variant="default" className="text-xs">Admin</Badge>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              {u.user_id !== user.id && (
+                                <div className="flex gap-2">
+                                  {u.role === "pending" && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="gap-1"
+                                      onClick={() => handleRoleChange(u.user_id, "viewer", u.role_id)}
+                                    >
+                                      <UserCheck className="w-3 h-3" /> Approve
+                                    </Button>
+                                  )}
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button size="sm" variant="destructive" className="gap-1">
+                                        <Trash2 className="w-3 h-3" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Remove User?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          This will remove {u.full_name || u.email}'s role and profile.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => handleDeleteUser(u.user_id)}>
+                                          Remove
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
                               )}
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button size="sm" variant="destructive" className="gap-1">
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Remove User?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      This will remove {u.full_name || u.email}'s role and profile. This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDeleteUser(u.user_id)}>
-                                      Remove
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="activity">
+              <ActivityLogPanel />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
       <Footer />

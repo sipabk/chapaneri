@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFamilyMembers, DbFamilyMember, MemberFormData, MemberPhoto } from "@/hooks/useFamilyMembers";
+import { useActivityLog } from "@/hooks/useActivityLog";
 
 type GenerationFilter = "all" | number;
 
@@ -26,6 +27,7 @@ const generationLabels: Record<number, string> = {
 const FamilyMembersPage = () => {
   const { user, canEdit } = useAuth();
   const { members, loading, addMember, updateMember, deleteMember, uploadPhoto, getMemberPhotos } = useFamilyMembers();
+  const { logActivity } = useActivityLog();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [generationFilter, setGenerationFilter] = useState<GenerationFilter>("all");
@@ -36,7 +38,6 @@ const FamilyMembersPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [primaryPhotos, setPrimaryPhotos] = useState<Record<string, string>>({});
 
-  // Load primary photos for all members
   useEffect(() => {
     const loadPhotos = async () => {
       const photoMap: Record<string, string> = {};
@@ -76,23 +77,46 @@ const FamilyMembersPage = () => {
     if (!user) return;
     setIsSubmitting(true);
     if (editingMember) {
-      await updateMember(editingMember.id, form);
+      const success = await updateMember(editingMember.id, form);
+      if (success) {
+        // Compute changed fields
+        const changes: Record<string, unknown> = {};
+        (Object.keys(form) as (keyof MemberFormData)[]).forEach(key => {
+          const oldVal = editingMember[key as keyof DbFamilyMember];
+          const newVal = form[key];
+          if (String(oldVal || "") !== String(newVal || "")) {
+            changes[key] = { from: oldVal, to: newVal };
+          }
+        });
+        await logActivity("update", editingMember.id, form.name, changes);
+      }
     } else {
-      await addMember(form, user.id);
+      const data = await addMember(form, user.id);
+      if (data) {
+        await logActivity("create", data.id, form.name);
+      }
     }
     setIsSubmitting(false);
     setEditingMember(null);
   };
 
   const handleUploadPhotos = async (files: File[]) => {
-    // Photos are uploaded after member creation — we need the latest member
-    if (!user) return;
-    // The newest member is the last one added. We rely on the toast for confirmation.
+    if (!user || !editingMember) return;
+    for (const file of files) {
+      await uploadPhoto(editingMember.id, file, user.id);
+    }
   };
 
   const handleEdit = (member: DbFamilyMember) => {
     setEditingMember(member);
     setFormOpen(true);
+  };
+
+  const handleDelete = async (member: DbFamilyMember) => {
+    const success = await deleteMember(member.id);
+    if (success) {
+      await logActivity("delete", member.id, member.name);
+    }
   };
 
   const handleViewDetail = async (member: DbFamilyMember) => {
@@ -106,7 +130,6 @@ const FamilyMembersPage = () => {
       <Header />
 
       <main className="pt-20 md:pt-24">
-        {/* Page Header */}
         <section className="bg-gradient-parchment border-b border-border">
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-3xl mx-auto text-center">
@@ -129,7 +152,6 @@ const FamilyMembersPage = () => {
           </div>
         </section>
 
-        {/* Filters */}
         <section className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -167,7 +189,6 @@ const FamilyMembersPage = () => {
           </div>
         </section>
 
-        {/* Members Grid */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             {loading ? (
@@ -209,7 +230,7 @@ const FamilyMembersPage = () => {
                           photoUrl={primaryPhotos[member.id]}
                           canEdit={canEdit}
                           onEdit={() => handleEdit(member)}
-                          onDelete={() => deleteMember(member.id)}
+                          onDelete={() => handleDelete(member)}
                           onClick={() => handleViewDetail(member)}
                         />
                       ))}
@@ -224,7 +245,6 @@ const FamilyMembersPage = () => {
 
       <Footer />
 
-      {/* Form Dialog */}
       <MemberFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -234,12 +254,13 @@ const FamilyMembersPage = () => {
         isSubmitting={isSubmitting}
       />
 
-      {/* Detail Dialog */}
       <MemberDetailDialog
         open={!!detailMember}
         onOpenChange={open => { if (!open) setDetailMember(null); }}
         member={detailMember}
         photos={detailPhotos}
+        allMembers={members}
+        canEdit={canEdit}
       />
     </div>
   );

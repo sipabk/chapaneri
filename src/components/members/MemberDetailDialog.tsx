@@ -1,17 +1,19 @@
-import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { User, Calendar, MapPin, Mail, Phone, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DbFamilyMember, MemberPhoto } from "@/hooks/useFamilyMembers";
+import { RelationshipManager } from "@/components/members/RelationshipManager";
 
 interface MemberDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: DbFamilyMember | null;
   photos: MemberPhoto[];
+  allMembers?: DbFamilyMember[];
+  canEdit?: boolean;
 }
 
-export const MemberDetailDialog = ({ open, onOpenChange, member, photos }: MemberDetailDialogProps) => {
+export const MemberDetailDialog = ({ open, onOpenChange, member, photos, allMembers = [], canEdit = false }: MemberDetailDialogProps) => {
   if (!member) return null;
 
   const primaryPhoto = photos.find(p => p.is_primary) || photos[0];
@@ -44,7 +46,7 @@ export const MemberDetailDialog = ({ open, onOpenChange, member, photos }: Membe
             </span>
           </div>
 
-          {/* Details Grid */}
+          {/* Details */}
           <div className="space-y-3">
             {member.date_of_birth && (
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -91,6 +93,14 @@ export const MemberDetailDialog = ({ open, onOpenChange, member, photos }: Membe
               <p className="text-sm text-muted-foreground">{member.bio}</p>
             </div>
           )}
+
+          {/* Relationships */}
+          <RelationshipManager
+            memberId={member.id}
+            memberGender={member.gender}
+            allMembers={allMembers}
+            canEdit={canEdit}
+          />
 
           {/* Photos Gallery */}
           {photos.length > 1 && (
