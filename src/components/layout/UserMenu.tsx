@@ -13,15 +13,7 @@ export const UserMenu = () => {
 
   if (loading) return null;
 
-  if (!user) {
-    return (
-      <Link to="/auth">
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-          <LogIn className="w-5 h-5" />
-        </Button>
-      </Link>
-    );
-  }
+  if (!user) return null;
 
   return (
     <DropdownMenu>
