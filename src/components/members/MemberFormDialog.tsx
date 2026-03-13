@@ -183,8 +183,7 @@ export const MemberFormDialog = ({
           </div>
 
           {/* Photo Upload */}
-          {!member && (
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label>Photos</Label>
               <div className="flex items-center gap-2">
                 <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="gap-2">
