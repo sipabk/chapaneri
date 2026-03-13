@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action_type: string
+          changes: Json | null
+          created_at: string
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          id: string
+          performed_by: string | null
+          performed_by_email: string
+        }
+        Insert: {
+          action_type: string
+          changes?: Json | null
+          created_at?: string
+          entity_id: string
+          entity_name?: string
+          entity_type?: string
+          id?: string
+          performed_by?: string | null
+          performed_by_email?: string
+        }
+        Update: {
+          action_type?: string
+          changes?: Json | null
+          created_at?: string
+          entity_id?: string
+          entity_name?: string
+          entity_type?: string
+          id?: string
+          performed_by?: string | null
+          performed_by_email?: string
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           address: string | null
@@ -82,6 +118,45 @@ export type Database = {
           {
             foreignKeyName: "family_members_spouse_id_fkey"
             columns: ["spouse_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_relationships: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          related_member_id: string
+          relationship_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          related_member_id: string
+          relationship_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          related_member_id?: string
+          relationship_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_relationships_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_relationships_related_member_id_fkey"
+            columns: ["related_member_id"]
             isOneToOne: false
             referencedRelation: "family_members"
             referencedColumns: ["id"]
