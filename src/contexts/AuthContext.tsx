@@ -30,6 +30,22 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const logAuthEvent = async (actionType: "LOGIN" | "LOGOUT", userEmail: string, userId: string) => {
+  try {
+    await supabase.from("activity_logs").insert([{
+      action_type: actionType,
+      entity_type: "auth",
+      entity_id: userId,
+      entity_name: userEmail,
+      performed_by: userId,
+      performed_by_email: userEmail,
+      changes: { event: actionType, timestamp: new Date().toISOString() } as any,
+    }]);
+  } catch (e) {
+    // Silent fail — don't block auth flow
+  }
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -52,7 +68,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .select("role")
       .eq("user_id", userId);
     if (data && data.length > 0) {
-      // Priority: admin > editor > viewer > pending
       const roles = data.map((r) => r.role);
       if (roles.includes("admin")) setRole("admin");
       else if (roles.includes("editor")) setRole("editor");
@@ -65,15 +80,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Use setTimeout to avoid Supabase deadlock
           setTimeout(() => {
             fetchProfile(session.user.id);
             fetchRole(session.user.id);
           }, 0);
+
+          // Log sign-in event
+          if (event === "SIGNED_IN") {
+            setTimeout(() => {
+              logAuthEvent("LOGIN", session.user.email || "", session.user.id);
+            }, 500);
+          }
         } else {
           setProfile(null);
           setRole("pending");
@@ -113,6 +134,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    // Log logout before clearing state
+    if (user) {
+      await logAuthEvent("LOGOUT", user.email || profile?.email || "", user.id);
+    }
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);

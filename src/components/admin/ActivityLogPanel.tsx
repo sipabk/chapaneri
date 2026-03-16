@@ -12,6 +12,8 @@ const actionBadge = (type: string) => {
     case "create": return <Badge className="bg-primary text-primary-foreground">Created</Badge>;
     case "update": return <Badge variant="secondary">Updated</Badge>;
     case "delete": return <Badge variant="destructive">Deleted</Badge>;
+    case "LOGIN": return <Badge className="bg-green-600 text-white">Login</Badge>;
+    case "LOGOUT": return <Badge className="bg-orange-500 text-white">Logout</Badge>;
     default: return <Badge variant="outline">{type}</Badge>;
   }
 };
@@ -66,6 +68,8 @@ export const ActivityLogPanel = () => {
               <SelectItem value="create">Created</SelectItem>
               <SelectItem value="update">Updated</SelectItem>
               <SelectItem value="delete">Deleted</SelectItem>
+              <SelectItem value="LOGIN">Login</SelectItem>
+              <SelectItem value="LOGOUT">Logout</SelectItem>
             </SelectContent>
           </Select>
         </div>
