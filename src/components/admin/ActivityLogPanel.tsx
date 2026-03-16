@@ -68,6 +68,8 @@ export const ActivityLogPanel = () => {
               <SelectItem value="create">Created</SelectItem>
               <SelectItem value="update">Updated</SelectItem>
               <SelectItem value="delete">Deleted</SelectItem>
+              <SelectItem value="LOGIN">Login</SelectItem>
+              <SelectItem value="LOGOUT">Logout</SelectItem>
             </SelectContent>
           </Select>
         </div>
