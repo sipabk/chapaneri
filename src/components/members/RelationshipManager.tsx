@@ -37,29 +37,21 @@ export const RelationshipManager = ({ memberId, memberGender, allMembers, canEdi
     if (memberId) loadRels();
   }, [memberId]);
 
-  const resolved: ResolvedRelationship[] = relationships
+  // Only show outgoing relationships (where this member is the source)
+  // Since both directions are stored, outgoing rels describe the related member's role
+  const unique: ResolvedRelationship[] = relationships
+    .filter(r => r.member_id === memberId)
     .map(r => {
-      const isOutgoing = r.member_id === memberId;
-      const relatedId = isOutgoing ? r.related_member_id : r.member_id;
-      const member = allMembers.find(m => m.id === relatedId);
+      const member = allMembers.find(m => m.id === r.related_member_id);
       if (!member) return null;
       return {
         id: r.id,
         relatedMember: member,
-        type: isOutgoing ? r.relationship_type : r.relationship_type,
-        direction: isOutgoing ? "outgoing" as const : "incoming" as const,
+        type: r.relationship_type,
+        direction: "outgoing" as const,
       };
     })
     .filter((r): r is ResolvedRelationship => r !== null);
-
-  // Deduplicate (since we store both directions)
-  const seen = new Set<string>();
-  const unique = resolved.filter(r => {
-    const key = [r.relatedMember.id, r.type].sort().join("-");
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
 
   // Group by type
   const grouped: Record<string, ResolvedRelationship[]> = {};
