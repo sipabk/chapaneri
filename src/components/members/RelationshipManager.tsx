@@ -51,7 +51,7 @@ export const RelationshipManager = ({ memberId, memberGender, allMembers, canEdi
         direction: "outgoing" as const,
       };
     })
-    .filter((r): r is ResolvedRelationship => r !== null);
+    .filter(Boolean) as ResolvedRelationship[];
 
   // Group by type
   const grouped: Record<string, ResolvedRelationship[]> = {};
