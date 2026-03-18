@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { User, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DbFamilyMember } from "@/hooks/useFamilyMembers";
 import { FamilyRelationship } from "@/hooks/useRelationships";
+import { MemberPhoto } from "@/hooks/useFamilyMembers";
 
 interface DbFamilyTreeNodeProps {
   member: DbFamilyMember;
@@ -11,6 +12,9 @@ interface DbFamilyTreeNodeProps {
   level?: number;
   visitedIds?: Set<string>;
   onSelectMember?: (member: DbFamilyMember) => void;
+  photosMap?: Map<string, MemberPhoto>;
+  highlightedIds?: Set<string>;
+  forceExpandIds?: Set<string>;
 }
 
 const getChildren = (
@@ -41,8 +45,17 @@ export const DbFamilyTreeNode = ({
   level = 0,
   visitedIds = new Set(),
   onSelectMember,
+  photosMap = new Map(),
+  highlightedIds = new Set(),
+  forceExpandIds = new Set(),
 }: DbFamilyTreeNodeProps) => {
-  const [isExpanded, setIsExpanded] = useState(level < 2);
+  const shouldForceExpand = forceExpandIds.has(member.id);
+  const [isExpanded, setIsExpanded] = useState(level < 2 || shouldForceExpand);
+
+  // Update expansion when force expand changes
+  useMemo(() => {
+    if (shouldForceExpand) setIsExpanded(true);
+  }, [shouldForceExpand]);
 
   if (visitedIds.has(member.id)) return null;
   const newVisited = new Set(visitedIds);
@@ -53,42 +66,53 @@ export const DbFamilyTreeNode = ({
 
   const children = getChildren(member.id, allRelationships, allMembers);
 
-  const MemberNode = ({ m }: { m: DbFamilyMember }) => (
-    <button
-      onClick={() => onSelectMember?.(m)}
-      className={cn(
-        "group flex flex-col items-center p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-lg cursor-pointer",
-        m.gender === "male"
-          ? "bg-card border-primary/30 hover:border-primary"
-          : "bg-card border-accent/30 hover:border-accent"
-      )}
-    >
-      <div className={cn(
-        "w-12 h-12 rounded-full flex items-center justify-center mb-2",
-        m.gender === "male" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"
-      )}>
-        <User className="w-6 h-6" />
-      </div>
-      <p className="font-display text-sm font-semibold text-foreground text-center max-w-[120px] line-clamp-2 group-hover:text-primary transition-colors">
-        {m.name}
-      </p>
-      {m.date_of_birth && (
-        <p className="text-xs text-muted-foreground mt-1">
-          b. {m.date_of_birth.split(" ").pop()}
+  const isHighlighted = highlightedIds.has(member.id);
+  const isSpouseHighlighted = spouse ? highlightedIds.has(spouse.id) : false;
+
+  const MemberNode = ({ m, highlighted }: { m: DbFamilyMember; highlighted?: boolean }) => {
+    const photo = photosMap.get(m.id);
+    return (
+      <button
+        onClick={() => onSelectMember?.(m)}
+        className={cn(
+          "group flex flex-col items-center p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-lg cursor-pointer",
+          highlighted && "ring-2 ring-offset-2 ring-primary scale-105 shadow-lg",
+          m.gender === "male"
+            ? "bg-card border-primary/30 hover:border-primary"
+            : "bg-card border-accent/30 hover:border-accent"
+        )}
+      >
+        <div className={cn(
+          "w-12 h-12 rounded-full flex items-center justify-center mb-2 overflow-hidden",
+          !photo && (m.gender === "male" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground")
+        )}>
+          {photo ? (
+            <img src={photo.photo_url} alt={m.name} className="w-full h-full object-cover" />
+          ) : (
+            <User className="w-6 h-6" />
+          )}
+        </div>
+        <p className="font-display text-sm font-semibold text-foreground text-center max-w-[120px] line-clamp-2 group-hover:text-primary transition-colors">
+          {m.name}
         </p>
-      )}
-    </button>
-  );
+        {m.date_of_birth && (
+          <p className="text-xs text-muted-foreground mt-1">
+            b. {m.date_of_birth.split(" ").pop()}
+          </p>
+        )}
+      </button>
+    );
+  };
 
   return (
     <div className="relative">
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-2">
-          <MemberNode m={member} />
+          <MemberNode m={member} highlighted={isHighlighted} />
           {spouse && (
             <>
               <div className="w-8 h-0.5 bg-accent/50" />
-              <MemberNode m={spouse} />
+              <MemberNode m={spouse} highlighted={isSpouseHighlighted} />
             </>
           )}
         </div>
@@ -120,6 +144,9 @@ export const DbFamilyTreeNode = ({
                     level={level + 1}
                     visitedIds={newVisited}
                     onSelectMember={onSelectMember}
+                    photosMap={photosMap}
+                    highlightedIds={highlightedIds}
+                    forceExpandIds={forceExpandIds}
                   />
                 </div>
               ))}

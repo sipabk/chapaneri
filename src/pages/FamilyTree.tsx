@@ -1,29 +1,74 @@
-import { useState, useEffect, useCallback } from "react";
-import { TreeDeciduous, ZoomIn, ZoomOut, Maximize2, Printer, Loader2 } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { TreeDeciduous, ZoomIn, ZoomOut, Maximize2, Printer, Loader2, Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DbFamilyTreeNode } from "@/components/tree/DbFamilyTreeNode";
 import { MemberDetailDialog } from "@/components/members/MemberDetailDialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFamilyMembers, DbFamilyMember, MemberPhoto } from "@/hooks/useFamilyMembers";
 import { useRelationships, FamilyRelationship } from "@/hooks/useRelationships";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
+// Build ancestor path set: all IDs from root to any highlighted member
+const getAncestorIds = (
+  highlightedIds: Set<string>,
+  rootId: string,
+  allRels: FamilyRelationship[],
+  allMembers: DbFamilyMember[]
+): Set<string> => {
+  const result = new Set<string>();
+  
+  // BFS from root, track paths
+  const findPaths = (currentId: string, path: string[], visited: Set<string>) => {
+    if (highlightedIds.has(currentId)) {
+      path.forEach(id => result.add(id));
+      result.add(currentId);
+    }
+    
+    const childIds = allRels
+      .filter(r => r.member_id === currentId && (r.relationship_type === "son" || r.relationship_type === "daughter"))
+      .map(r => r.related_member_id);
+    
+    // Also check spouse's children
+    const spouseRel = allRels.find(r => r.member_id === currentId && r.relationship_type === "spouse");
+    if (spouseRel) {
+      const spouseChildIds = allRels
+        .filter(r => r.member_id === spouseRel.related_member_id && (r.relationship_type === "son" || r.relationship_type === "daughter"))
+        .map(r => r.related_member_id);
+      childIds.push(...spouseChildIds);
+    }
+    
+    const uniqueChildIds = [...new Set(childIds)];
+    
+    for (const childId of uniqueChildIds) {
+      if (!visited.has(childId)) {
+        visited.add(childId);
+        findPaths(childId, [...path, currentId], visited);
+      }
+    }
+  };
+  
+  findPaths(rootId, [], new Set([rootId]));
+  return result;
+};
+
 const FamilyTree = () => {
   const [zoom, setZoom] = useState(1);
   const { members, loading, getMemberPhotos } = useFamilyMembers();
-  const { getRelationships } = useRelationships();
   const { canEdit } = useAuth();
   const [allRels, setAllRels] = useState<FamilyRelationship[]>([]);
   const [rootId, setRootId] = useState<string>("");
   const [detailMember, setDetailMember] = useState<DbFamilyMember | null>(null);
   const [detailPhotos, setDetailPhotos] = useState<MemberPhoto[]>([]);
   const [relsLoading, setRelsLoading] = useState(true);
+  const [photosMap, setPhotosMap] = useState<Map<string, MemberPhoto>>(new Map());
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Load all relationships at once
+  // Load all relationships
   useEffect(() => {
     const loadAllRels = async () => {
       setRelsLoading(true);
@@ -34,7 +79,26 @@ const FamilyTree = () => {
     loadAllRels();
   }, []);
 
-  // Find a good default root: the member named "Bhagvanji Champaneri" (paternal grandfather) or first gen-0 member
+  // Load all primary photos for tree nodes
+  useEffect(() => {
+    const loadPhotos = async () => {
+      const { data } = await supabase.from("member_photos").select("*");
+      if (data) {
+        const map = new Map<string, MemberPhoto>();
+        // Prefer primary photos, fallback to first
+        for (const photo of data as MemberPhoto[]) {
+          const existing = map.get(photo.member_id);
+          if (!existing || photo.is_primary) {
+            map.set(photo.member_id, photo);
+          }
+        }
+        setPhotosMap(map);
+      }
+    };
+    loadPhotos();
+  }, []);
+
+  // Default root
   useEffect(() => {
     if (members.length > 0 && !rootId) {
       const patriarch = members.find(m => m.name.includes("Bhagvanji"));
@@ -48,6 +112,20 @@ const FamilyTree = () => {
   }, [members, rootId]);
 
   const rootMember = members.find(m => m.id === rootId);
+
+  // Search logic
+  const highlightedIds = useMemo(() => {
+    if (!searchQuery.trim()) return new Set<string>();
+    const q = searchQuery.toLowerCase();
+    return new Set(
+      members.filter(m => m.name.toLowerCase().includes(q)).map(m => m.id)
+    );
+  }, [searchQuery, members]);
+
+  const forceExpandIds = useMemo(() => {
+    if (highlightedIds.size === 0 || !rootId) return new Set<string>();
+    return getAncestorIds(highlightedIds, rootId, allRels, members);
+  }, [highlightedIds, rootId, allRels, members]);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.1, 1.5));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.1, 0.3));
@@ -85,7 +163,7 @@ const FamilyTree = () => {
 
         <div className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm text-muted-foreground">Root:</span>
               <Select value={rootId} onValueChange={setRootId}>
                 <SelectTrigger className="w-[220px]">
@@ -97,6 +175,30 @@ const FamilyTree = () => {
                   ))}
                 </SelectContent>
               </Select>
+
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search members..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="pl-9 pr-8 w-[200px]"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              {highlightedIds.size > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {highlightedIds.size} match{highlightedIds.size !== 1 ? "es" : ""}
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="icon" onClick={handleZoomOut} disabled={zoom <= 0.3}>
@@ -129,12 +231,16 @@ const FamilyTree = () => {
             <div
               className="min-w-max flex justify-center px-8 pb-8 transition-transform duration-200"
               style={{ transform: `scale(${zoom})`, transformOrigin: "top center" }}
+              key={`${rootId}-${searchQuery}`}
             >
               <DbFamilyTreeNode
                 member={rootMember}
                 allMembers={members}
                 allRelationships={allRels}
                 onSelectMember={handleSelectMember}
+                photosMap={photosMap}
+                highlightedIds={highlightedIds}
+                forceExpandIds={forceExpandIds}
               />
             </div>
           )}
@@ -159,6 +265,10 @@ const FamilyTree = () => {
               <div className="flex items-center gap-2">
                 <div className="w-0.5 h-6 bg-border" />
                 <span className="text-sm text-muted-foreground">Parent-Child</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded ring-2 ring-primary" />
+                <span className="text-sm text-muted-foreground">Search Match</span>
               </div>
             </div>
           </div>
