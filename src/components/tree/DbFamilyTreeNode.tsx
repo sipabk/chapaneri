@@ -76,7 +76,7 @@ export const DbFamilyTreeNode = ({
         onClick={() => onSelectMember?.(m)}
         className={cn(
           "group flex flex-col items-center p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-lg cursor-pointer",
-          highlighted && "ring-2 ring-offset-2 ring-yellow-400 scale-105",
+          highlighted && "ring-2 ring-offset-2 ring-primary scale-105 shadow-lg",
           m.gender === "male"
             ? "bg-card border-primary/30 hover:border-primary"
             : "bg-card border-accent/30 hover:border-accent"

@@ -267,7 +267,7 @@ const FamilyTree = () => {
                 <span className="text-sm text-muted-foreground">Parent-Child</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded ring-2 ring-yellow-400" />
+                <div className="w-6 h-6 rounded ring-2 ring-primary" />
                 <span className="text-sm text-muted-foreground">Search Match</span>
               </div>
             </div>
