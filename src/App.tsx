@@ -79,6 +79,11 @@ const App = () => (
                   <SearchPage />
                 </ProtectedRoute>
               } />
+              <Route path="/statistics" element={
+                <ProtectedRoute>
+                  <Statistics />
+                </ProtectedRoute>
+              } />
               <Route path="/download-theme" element={
                 <ProtectedRoute requiredRole="admin">
                   <DownloadTheme />

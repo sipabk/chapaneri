@@ -19,6 +19,7 @@ export const Header = () => {
         { path: "/family-members", label: "Members", icon: Users },
         { path: "/timeline", label: "Timeline", icon: Clock },
         { path: "/places", label: "Places", icon: MapPin },
+        { path: "/statistics", label: "Statistics", icon: BarChart3 },
       ]
     : [
         { path: "/", label: "Home", icon: TreeDeciduous },
