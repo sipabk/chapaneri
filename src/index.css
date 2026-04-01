@@ -262,7 +262,11 @@
   }
 
   @page {
-    size: landscape;
+    size: portrait;
     margin: 1cm;
+  }
+
+  header, footer, .print\:hidden {
+    display: none !important;
   }
 }
