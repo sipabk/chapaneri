@@ -19,6 +19,7 @@ import DownloadTheme from "./pages/DownloadTheme";
 import Auth from "./pages/Auth";
 import PendingApproval from "./pages/PendingApproval";
 import AdminPanel from "./pages/AdminPanel";
+import Statistics from "./pages/Statistics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -76,6 +77,11 @@ const App = () => (
               <Route path="/search" element={
                 <ProtectedRoute>
                   <SearchPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/statistics" element={
+                <ProtectedRoute>
+                  <Statistics />
                 </ProtectedRoute>
               } />
               <Route path="/download-theme" element={
