@@ -19,6 +19,7 @@ import DownloadTheme from "./pages/DownloadTheme";
 import Auth from "./pages/Auth";
 import PendingApproval from "./pages/PendingApproval";
 import AdminPanel from "./pages/AdminPanel";
+import Statistics from "./pages/Statistics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
