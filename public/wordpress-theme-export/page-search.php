@@ -208,6 +208,21 @@ sort($locations);
             );
         }
         
+        // Living/Deceased filter (v3.0)
+        if ($status_filter === 'living') {
+            $args['meta_query'][] = array(
+                'relation' => 'OR',
+                array('key' => '_death_date', 'compare' => 'NOT EXISTS'),
+                array('key' => '_death_date', 'value' => '', 'compare' => '='),
+            );
+        } elseif ($status_filter === 'deceased') {
+            $args['meta_query'][] = array(
+                'key'     => '_death_date',
+                'value'   => '',
+                'compare' => '!=',
+            );
+        }
+        
         // Sorting
         switch ($sort_by) {
             case 'name_desc':
