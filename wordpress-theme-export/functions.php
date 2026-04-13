@@ -3,7 +3,7 @@
  * Chapaneri Family Heritage Theme Functions
  *
  * @package Chapaneri_Heritage
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 if (!defined('ABSPATH')) {
@@ -143,6 +143,33 @@ function chapaneri_heritage_scripts() {
         wp_get_theme()->get('Version'),
         true
     );
+
+    // v3.0: Tree search
+    wp_enqueue_script(
+        'chapaneri-heritage-tree-search',
+        get_template_directory_uri() . '/assets/js/tree-search.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+
+    // v3.0: Chart.js (CDN) + statistics charts — only on statistics page
+    if (is_page_template('page-statistics.php')) {
+        wp_enqueue_script(
+            'chartjs',
+            'https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js',
+            array(),
+            '4.4.0',
+            true
+        );
+        wp_enqueue_script(
+            'chapaneri-heritage-statistics-charts',
+            get_template_directory_uri() . '/assets/js/statistics-charts.js',
+            array('chartjs'),
+            wp_get_theme()->get('Version'),
+            true
+        );
+    }
     
     // Localize AJAX variables
     wp_localize_script('chapaneri-heritage-ajax-search', 'chapaneriAjax', array(
@@ -230,6 +257,11 @@ require_once get_template_directory() . '/inc/class-import-export.php';
 
 // Include Gutenberg blocks
 require_once get_template_directory() . '/inc/blocks/family-member-block.php';
+
+// v3.0: Include new modules
+require_once get_template_directory() . '/inc/class-family-relationships.php';
+require_once get_template_directory() . '/inc/class-statistics-calculator.php';
+require_once get_template_directory() . '/inc/class-activity-logger.php';
 
 /**
  * AJAX Handler: Member Search

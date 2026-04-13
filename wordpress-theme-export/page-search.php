@@ -15,7 +15,8 @@ $generation_filter = isset($_GET['generation']) ? sanitize_text_field($_GET['gen
 $gender_filter = isset($_GET['gender']) ? sanitize_text_field($_GET['gender']) : '';
 $location_filter = isset($_GET['location']) ? sanitize_text_field($_GET['location']) : '';
 $sort_by = isset($_GET['sort']) ? sanitize_text_field($_GET['sort']) : 'name';
-$is_searching = !empty($search_query) || !empty($generation_filter) || !empty($gender_filter) || !empty($location_filter);
+$status_filter = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+$is_searching = !empty($search_query) || !empty($generation_filter) || !empty($gender_filter) || !empty($location_filter) || !empty($status_filter);
 
 // Get all generations for filter
 $generations = get_terms(array(
@@ -131,6 +132,16 @@ sort($locations);
                 </select>
             </div>
             
+            <!-- Living/Deceased Filter (v3.0) -->
+            <div class="search-filter-group">
+                <label for="status" class="form-label"><?php esc_html_e('Status', 'chapaneri-heritage'); ?></label>
+                <select name="status" id="status" class="form-input">
+                    <option value=""><?php esc_html_e('All', 'chapaneri-heritage'); ?></option>
+                    <option value="living" <?php selected($status_filter, 'living'); ?>><?php esc_html_e('Living', 'chapaneri-heritage'); ?></option>
+                    <option value="deceased" <?php selected($status_filter, 'deceased'); ?>><?php esc_html_e('Deceased', 'chapaneri-heritage'); ?></option>
+                </select>
+            </div>
+            
             <!-- Sort By -->
             <div class="search-filter-group">
                 <label for="sort" class="form-label"><?php esc_html_e('Sort By', 'chapaneri-heritage'); ?></label>
@@ -194,6 +205,21 @@ sort($locations);
                 'key'     => '_birth_place',
                 'value'   => $location_filter,
                 'compare' => 'LIKE',
+            );
+        }
+        
+        // Living/Deceased filter (v3.0)
+        if ($status_filter === 'living') {
+            $args['meta_query'][] = array(
+                'relation' => 'OR',
+                array('key' => '_death_date', 'compare' => 'NOT EXISTS'),
+                array('key' => '_death_date', 'value' => '', 'compare' => '='),
+            );
+        } elseif ($status_filter === 'deceased') {
+            $args['meta_query'][] = array(
+                'key'     => '_death_date',
+                'value'   => '',
+                'compare' => '!=',
             );
         }
         

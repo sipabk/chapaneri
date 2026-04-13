@@ -1,0 +1,279 @@
+/**
+ * Import/Export Admin Page Styles
+ *
+ * @package Chapaneri_Heritage
+ */
+
+.chapaneri-import-export {
+    max-width: 1200px;
+}
+
+.chapaneri-import-export h1 {
+    margin-bottom: 24px;
+}
+
+.import-export-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 782px) {
+    .import-export-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.import-export-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.import-export-card .card-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, hsl(350, 45%, 35%) 0%, hsl(25, 35%, 28%) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.import-export-card .card-icon .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #fff;
+}
+
+.import-export-card h2 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.import-export-card > p {
+    color: #646970;
+    margin-bottom: 20px;
+}
+
+/* Export Options */
+.export-options {
+    margin-bottom: 20px;
+}
+
+.export-options label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid #c3c4c7;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.export-options label:hover {
+    border-color: hsl(350, 45%, 35%);
+    background: #f9f9f9;
+}
+
+.export-options label:has(input:checked) {
+    border-color: hsl(350, 45%, 35%);
+    background: hsl(350, 45%, 97%);
+}
+
+.export-options input[type="radio"] {
+    margin: 0;
+}
+
+.export-options .format-desc {
+    width: 100%;
+    font-size: 12px;
+    color: #646970;
+    margin-left: 24px;
+}
+
+/* Export Filters */
+.export-filters {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f6f7f7;
+    border-radius: 6px;
+}
+
+.export-filters h4 {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.export-filters label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.export-filters label:last-child {
+    margin-bottom: 0;
+}
+
+/* Import Dropzone */
+.import-dropzone {
+    border: 2px dashed #c3c4c7;
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.2s ease;
+}
+
+.import-dropzone:hover,
+.import-dropzone.dragover {
+    border-color: hsl(350, 45%, 35%);
+    background: hsl(350, 45%, 98%);
+}
+
+.import-dropzone.has-file {
+    border-color: hsl(145, 35%, 38%);
+    background: hsl(145, 35%, 97%);
+}
+
+.import-dropzone .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #c3c4c7;
+    margin-bottom: 12px;
+}
+
+.import-dropzone.dragover .dashicons,
+.import-dropzone.has-file .dashicons {
+    color: hsl(350, 45%, 35%);
+}
+
+.import-dropzone p {
+    margin: 0 0 12px 0;
+    color: #646970;
+}
+
+.import-dropzone .file-name {
+    margin-top: 12px;
+    font-weight: 600;
+    color: hsl(145, 35%, 38%);
+}
+
+/* Import Options */
+.import-options {
+    margin-bottom: 24px;
+}
+
+.import-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+/* Hero Buttons */
+.button-hero {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+}
+
+.button-hero .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Help Section */
+.import-export-help {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.import-export-help h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.help-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 1200px) {
+    .help-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .help-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.help-item h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.help-item h4 .dashicons {
+    color: hsl(350, 45%, 35%);
+}
+
+.help-item p {
+    margin: 0;
+    font-size: 12px;
+    color: #646970;
+    line-height: 1.5;
+}
+
+/* Import Preview */
+.import-preview {
+    margin-top: 24px;
+}
+
+.import-preview h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.preview-content {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    padding: 16px;
+    background: #f6f7f7;
+    font-family: monospace;
+    font-size: 12px;
+}
