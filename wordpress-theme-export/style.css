@@ -3,8 +3,8 @@ Theme Name: Chapaneri Family Heritage
 Theme URI: https://chapaneri.lovable.app
 Author: Chapaneri Family
 Author URI: https://chapaneri.lovable.app
-Description: A heritage-inspired family archive theme with 6 color themes, advanced search, photo galleries, and elegant typography. Version 2.0 features multi-theme support (Heritage, Ocean, Forest, Royal, Sunset, Midnight).
-Version: 2.0.0
+Description: A heritage-inspired family archive theme with 6 color themes, statistics dashboard, family relationships, activity logging, printable tree, advanced search, photo galleries, and elegant typography. Version 3.0 adds Statistics, Relationships DB, Activity Logs, Printable Tree, Admin Dashboard, Tree Search, and Chart.js visualizations.
+Version: 3.0.0
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: chapaneri-heritage
@@ -3404,5 +3404,333 @@ a:hover {
   .lightbox-nav {
     width: 44px;
     height: 44px;
+  }
+}
+
+/* ==========================================================================
+   v3.0 — STATISTICS DASHBOARD STYLES
+   ========================================================================== */
+
+.page-header-section {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+}
+
+.page-header__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--spacing-4);
+}
+
+.stats-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
+}
+
+.stat-card {
+  text-align: center;
+  padding: var(--spacing-6);
+}
+
+.stat-card__value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: var(--spacing-2);
+}
+
+.stat-card__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+}
+
+/* Stats Tabs */
+.stats-tabs__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stats-tab {
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.stats-tab:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-foreground);
+}
+
+.stats-tab.active {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-color: var(--color-primary);
+}
+
+.stats-tab-content {
+  display: none;
+}
+
+.stats-tab-content.active {
+  display: block;
+}
+
+.stats-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-6);
+}
+
+.stats-charts-grid .heritage-card {
+  padding: var(--spacing-6);
+}
+
+.stats-charts-grid canvas {
+  max-height: 300px;
+}
+
+.chart-legend {
+  display: flex;
+  gap: var(--spacing-4);
+  justify-content: center;
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-sm);
+}
+
+.chart-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+}
+
+/* Stats Info Grid */
+.stats-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-4);
+  margin: var(--spacing-4) 0;
+}
+
+.stats-info-item {
+  text-align: center;
+  padding: var(--spacing-4);
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.stats-info-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.stats-info-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+  margin-top: var(--spacing-1);
+}
+
+/* Stats Tables */
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.stats-table th {
+  text-align: left;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 2px solid var(--color-border);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.stats-table td {
+  padding: var(--spacing-2) var(--spacing-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stats-table tbody tr:hover {
+  background-color: var(--color-secondary);
+}
+
+.stats-empty {
+  text-align: center;
+  color: var(--color-muted-foreground);
+  padding: var(--spacing-8);
+  font-style: italic;
+}
+
+.stats-note {
+  color: var(--color-muted-foreground);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  margin-top: var(--spacing-4);
+}
+
+.stats-highlight {
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-4);
+}
+
+/* Relationship Badges */
+.relationship-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+}
+
+.rel-father, .rel-mother { background-color: hsl(210, 60%, 92%); color: hsl(210, 60%, 35%); }
+.rel-spouse { background-color: hsl(340, 60%, 92%); color: hsl(340, 60%, 35%); }
+.rel-son, .rel-daughter { background-color: hsl(145, 50%, 92%); color: hsl(145, 50%, 30%); }
+.rel-sibling, .rel-brother, .rel-sister { background-color: hsl(42, 85%, 92%); color: hsl(42, 70%, 30%); }
+.rel-created { background-color: hsl(145, 50%, 92%); color: hsl(145, 50%, 30%); }
+.rel-updated { background-color: hsl(210, 60%, 92%); color: hsl(210, 60%, 35%); }
+.rel-deleted { background-color: hsl(0, 65%, 92%); color: hsl(0, 65%, 35%); }
+.rel-relationship_added { background-color: hsl(270, 50%, 92%); color: hsl(270, 50%, 35%); }
+
+/* Tree Search Highlight */
+.tree-node--highlighted {
+  outline: 3px solid var(--color-accent) !important;
+  outline-offset: 2px;
+  box-shadow: var(--shadow-glow) !important;
+}
+
+/* ==========================================================================
+   v3.0 — PRINTABLE TREE STYLES
+   ========================================================================== */
+
+.printable-tree-page .print-header {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+}
+
+.print-tree-container {
+  overflow-x: auto;
+  padding: var(--spacing-4);
+}
+
+.print-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.print-node__card {
+  display: inline-block;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  min-width: 120px;
+  margin: var(--spacing-1);
+  background: var(--color-card);
+}
+
+.print-node--male .print-node__card { border-color: hsl(210, 60%, 55%); }
+.print-node--female .print-node__card { border-color: hsl(340, 60%, 55%); }
+
+.print-node__name {
+  display: block;
+  font-size: var(--font-size-sm);
+}
+
+.print-node__years {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-muted-foreground);
+}
+
+.print-node__marriage {
+  font-size: var(--font-size-lg);
+  color: var(--color-accent);
+  margin: 0 var(--spacing-2);
+}
+
+.print-node__children {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.no-print { }
+
+/* Print Media Query */
+@media print {
+  .site-header,
+  .site-footer,
+  .no-print,
+  .tree-controls,
+  .tree-search {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 10pt;
+  }
+
+  .heritage-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .print-node__card {
+    border-width: 1px;
+  }
+
+  .stats-charts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
   }
 }
