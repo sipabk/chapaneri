@@ -157,6 +157,20 @@ $root_member = $root_member_id ? get_post($root_member_id) : null;
         </div>
     </section>
 
+    <!-- Tree Search (v3.0) -->
+    <div class="tree-search" style="margin-bottom: var(--spacing-4);">
+        <div class="container">
+            <div style="display: flex; gap: var(--spacing-3); align-items: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="tree-search-input" class="form-input" placeholder="<?php esc_attr_e('Search family members in the tree...', 'chapaneri-heritage'); ?>" style="max-width: 400px;">
+                <span id="tree-search-count" style="display: none; font-size: var(--font-size-sm); color: var(--color-muted-foreground);"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Zoom Controls -->
     <div class="tree-controls">
         <div class="container">

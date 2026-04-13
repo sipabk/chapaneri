@@ -155,6 +155,49 @@ while (have_posts()) : the_post();
         
         <!-- Sidebar - Family Connections -->
         <aside class="member-sidebar">
+            <?php
+            // v3.0: Load relationships from custom table
+            $db_relationships = array();
+            if (class_exists('Chapaneri_Family_Relationships')) {
+                $rel_manager = Chapaneri_Family_Relationships::instance();
+                $db_relationships = $rel_manager->get_relationships(get_the_ID());
+            }
+            
+            // Group relationships by type
+            $rel_groups = array();
+            if (!empty($db_relationships)) {
+                foreach ($db_relationships as $rel) {
+                    $rel_groups[$rel->relationship_type][] = $rel;
+                }
+            }
+            
+            // Show siblings from relationships table
+            if (!empty($rel_groups['sibling'])) : ?>
+                <div class="card connection-card">
+                    <div class="card-header">
+                        <h3 class="card-title font-display">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <?php esc_html_e('Siblings', 'chapaneri-heritage'); ?>
+                            <span class="badge badge-muted"><?php echo count($rel_groups['sibling']); ?></span>
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <?php foreach ($rel_groups['sibling'] as $sib) : ?>
+                            <a href="<?php echo get_permalink($sib->related_member_id); ?>" class="connection-link">
+                                <div class="avatar">
+                                    <?php echo esc_html(mb_substr($sib->related_member_name, 0, 1)); ?>
+                                </div>
+                                <span><?php echo esc_html($sib->related_member_name); ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <!-- Spouse -->
             <?php if ($spouse) : ?>
                 <div class="card connection-card">
