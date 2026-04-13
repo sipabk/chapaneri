@@ -18,20 +18,30 @@ const THEME_FILES = [
   "page-timeline.php",
   "page-places.php",
   "page-search.php",
+  "page-statistics.php",
+  "page-printable-tree.php",
+  "page-admin.php",
   "template-parts/member-gallery.php",
   "inc/class-widget-family-stats.php",
   "inc/class-widget-featured-members.php",
   "inc/class-widget-related-members.php",
   "inc/class-import-export.php",
   "inc/class-admin-dashboard-widget.php",
+  "inc/class-family-relationships.php",
+  "inc/class-statistics-calculator.php",
+  "inc/class-activity-logger.php",
   "inc/shortcodes.php",
   "inc/blocks/family-member-block.php",
   "assets/js/navigation.js",
   "assets/js/theme-switcher.js",
   "assets/js/ajax-search.js",
   "assets/js/blocks.js",
+  "assets/js/statistics-charts.js",
+  "assets/js/tree-search.js",
   "assets/css/admin-import-export.css",
   "assets/css/blocks-editor.css",
+  "sql/schema.sql",
+  "sql/seed-relationships.sql",
   "README.md",
 ];
 
@@ -68,7 +78,7 @@ const DownloadTheme = () => {
       });
 
       const blob = await zip.generateAsync({ type: "blob" });
-      saveAs(blob, "chapaneri-heritage-v2.0.zip");
+      saveAs(blob, "chapaneri-heritage-v3.0.zip");
       setDone(true);
     } catch (err) {
       console.error("Download failed:", err);
@@ -91,8 +101,9 @@ const DownloadTheme = () => {
                 Download WordPress Theme
               </h1>
               <p className="text-muted-foreground text-lg">
-                Chapaneri Heritage v2.0 — Complete WordPress theme with 6 color
-                themes, family tree, timeline, search, photo galleries, and more.
+                Chapaneri Heritage v3.0 — Complete WordPress theme with statistics dashboard,
+                family relationships DB, activity logging, printable tree, 6 color themes,
+                Chart.js visualizations, and SQL schema.
               </p>
             </div>
 
